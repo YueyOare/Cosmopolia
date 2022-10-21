@@ -1,3 +1,4 @@
+from random import randint
 class Cosmopolia(): 
     """Основний клас гри"""
     def __init__(self):
@@ -32,11 +33,11 @@ class Cosmopolia():
 
     def Before_turn(Current_Player): #действия до хода
         Print_field_to_Player(Current_Player) #Выводим поле на консоль
-        if(get_enabled(Current_Player) == False): #Может ли игрок совершать ход? Если нет...
-            if(get_move_main(Current_Player) != 3): #Если в тюрьме меньше трех ходов...
+        if(Player.get_enabled(Current_Player) == False): #Может ли игрок совершать ход? Если нет...
+            if(Player.get_move_main(Current_Player) != 3): #Если в тюрьме меньше трех ходов...
                 action = int(input("Enter variant of action in prison: 1 - заплатити, 2 - сідіти далі, 3 - збігти")) #Действие игрока в тюрьме
         result = Prison(action, Current_Player)
     def Player_cube(Current_Player): #действие игрока после броска кубика
         dice = int(Randomaise_dice()) #Кидаем кубик
-        set_current_field(Current_Player, dice) #находим новую позицию игрока
+        Player.set_current_field(Current_Player, dice) #находим новую позицию игрока
         Field.event(Current_Player) #Событие с игроком на этой позиции
