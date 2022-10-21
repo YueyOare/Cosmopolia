@@ -1,46 +1,82 @@
 from array import *
 class Map():
-    """Клас який містить саму карту"""
-    array_Fields = []
-    array.append(int)
+    """Клас який містить саму карту""" 
     class Field(): # класс клітинок карти
-        def __init__(self, __name_of_class, __number_class, __event):
-         """Основні параметри кожного поля"""
-        self.__name_of_class = name_of_class
-        self.__number_class = number_class
-        self.__event = event
+      def __init__(self, name_of_class, number_class):
+       """Основні параметри кожного поля"""
+       self.name_of_class = name_of_class
+       self.number_class = number_class
+      def print_field(self):
+          print(self.__name_of_class + self.__number_class)
+      def event():
+       return 1
+
+    array_Fields=[]
+    def __init__ (self, number = 10):
+        self.number = number 
+        for i in range (number):
+           self.array_Fields.append(i)
+   
 
 class System():
     """Клас який класифікує нерухомість для можливості покращення"""
-    def __init__(self, __name_of_sysytem, __amount_of_planet, __branches, __cost_of_branches, __planet):
-     """"""
-     self.__name_of_sysytem = name_of_sysytem
-     self.__amount_of_planet = amount_of_planet
-     self.__branches =  branches
-     self.__cost_of_branches = __cost_of_branches
-     self.__planet = planet
+    class planet(Map.Field): # клас самої нерухомості
+      def __init__(self, name_of_planet = "earth", price_buy = 1345, price_pay = 648, owner = 0, amount_of_branches = 5):
+         self.__name_of_planet = name_of_planet
+         self.__price_buy = price_buy
+         self.__price_pay = price_pay
+         self.__owner = owner
+         self.__amount_of_branches = amount_of_branches
+      def print_planet(self):
+               print(self.__name_of_planet, self.__price_buy, self.__price_pay, self.__owner)
+      def set_owner(self, player): # метод що змінює власника нерухомості
+               print("метод set_owner працює")
+               return self.__owner
+      def upgrade(self,player, number_class):  # покращення нерухомості
+               print("метод upgrade працює")
+               return self.__price_pay
+      def pay(self,player,owner): # плата власнику нерухомості
+               print("метод pay працює")
+               return 1
+      def buy(self,player): # методи якщо нерухомість немає власника
+               print("метод buy працює")
+               return self.__owner  
+      def event(self, player):
+        if(self.__owner): # методи якщо нерухомість має власника
+          if(self.__owner==player):
+             return 1
+          else:  # якщо гравець не є власником нерухомості
+            self.pay(player,self.__owner)
+        else:
+            return 2 # питання чи буде гравець купляти поле
+    
+    array_planets=[]
+    def __init__(self, name_of_sysytem = "Sunny", amount_of_planet = 10, branches = "Sput", cost_of_branches = 1993):
+       self.__name_of_sysytem = name_of_sysytem
+       self.__amount_of_planet = amount_of_planet
+       self.__branches =  branches # філіали
+       self.__cost_of_branches = cost_of_branches
+       for i in range (amount_of_planet):
+           self.array_planets.append(i)
 
-     class planet(Field): # клас самої нерухомості
-          def __init__(self, __price_buy , __price_pay, __owner):
-           self.__price_buy = price_buy
-           self.__price_pay = price_pay
-           self.__owner = _owner
-          def set_owner(player): # метод що змінює власника нерухомості
-              return self.__owner
-          if(self.__owner): # методи якщо нерухомістьл має власника
-              if(self.__owner==player):
-                def upgrade(player, __nunber_class): # покращення нерухомості
-                    return self.__price_pay
-              else: # якщо гравець не є власником нерухомості
-                  def pay(player_who_pays,paid_player): # плата власнику нерухомості
-                      return 0
-          else:
-              def buy(player): # методи якщо нерухомість немає власника
-                  return self.__owner
-
-class Chance(Field):
+     
+class Chance(Map.Field):
     """Клас поля Шанс"""
-    def __init__(self, __chance_map): # варіанти карти шансу
-        self.__chance_map = chance_map
-    def random_map_selection(player): # гравець отримує карту
-        return self.__chance_map
+    array_maps=[]
+    def __init__(self, amount_of_maps = 20): # варіанти карти шансу
+        self.__amount_of_maps = amount_of_maps
+        for i in range (amount_of_maps):
+           self.array_maps.append(i)
+    def event(self, player): # гравець отримує карту
+        print("метод chance працює")
+        return 1
+
+Map1 = Map()
+Field1 = Map1.Field("шанс", 2)
+System1 = System("Sun", 2, "sputniki", 8139838)
+System2 = System("Sirius", 4)
+Planet11 = System2.planet("Alfa", 22, 77, "Human1")
+Planet = System1.planet(12232, 123, "Human2")
+Planet1 = System1.planet("Mars",2222, 111, "Bot")
+Planet11.print_planet()
+Planet1.event(2)
