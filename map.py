@@ -123,38 +123,42 @@ class Prison(Map.Field):
         print("Гравця звільнено. Метод set_free працює")
         # видаляємо з масиву
         player.set_enabled(True)
-        return 1
+        return 0
 
-    def player_choice(self, player,
-                      prisoner_index):  # гравець може вибрати сидіти у в'язниці або спробувати сплатити хабар ( може не спрацювати)
+    def player_choice(self, action, prisoner):  # гравець може вибрати сидіти у в'язниці або спробувати сплатити хабар ( може не спрацювати)
         print("Гравець зробив свій вибір. Метод player_choice працює")
         choice = randint(0, 2)
         value = randint(100, 600)
         random_amount = randint(0, 2)
-        if choice == 1:  # якщо гравець вирішив платити хабар, є шанс на те, що він попадеться
-            # player.setlessmoney(value) забираємо грошу
-            if random_amount == 1:  # якщо гравець попався, то додається ще + 1 простою
-                self.prisoner_array[
-                    prisoner_index] -= 1  # віднімається ход від поточних відсижених ходів ( тобто гравець сидить довше)
-                return 1
-            else:
-                # якщо гравець не попався, то він виходить достроково
-                return self.set_free(player, prisoner_index)
-        else:  # якщо гравець відмовився платити хабар, він чекає далі
-            print("Гравець сидить далі")
-            self.prisoner_array[prisoner_index] += 1
-            return 1
-        # просто продовжити ?
-
-    def event(self, prisoner):  # !!! уточнити, чи необхідно player ?
+        prisoner_index = 0
         # перевіряємо поточний хід (скільки залишилося у в'язниці ?  цикл ?)
         for player in self.prisoner_array:  # проходимо по масиву ув'язнених, перевіряючи, чи є даний гравець у в'язниці
             if player == prisoner:  # problem !!!!!!! якщо знайшли, що гравець у в'язниці, виконуємо наступні дії
-                if player <= 2:
-                    # якщо гравець ще має сидіти у в'язниці, запропонувати гравцю вибір
-                    return self.player_choice(prisoner, 0)
-                else:  # строк сидіння закінчився, гравець звільнився
-                    return self.set_free()
+
+                if action == 1:  # якщо гравець вирішив платити хабар, є шанс на те, що він попадеться
+                    # player.setlessmoney(value) забираємо грошу
+                    if random_amount == 1:  # якщо гравець попався, то додається ще + 1 простою
+                        self.prisoner_array[prisoner_index] -= 1  # віднімається ход від поточних відсижених ходів ( тобто гравець сидить довше)
+                        return 1
+                    else:
+                        # якщо гравець не попався, то він виходить достроково
+                        return self.set_free(player, prisoner_index)
+                elif action == 2:
+                    # сидеть дальше
+                    print("Гравець сидить далі")
+                    self.prisoner_array[prisoner_index] += 1
+                    return 1
+                else:  # с6ежать
+                    if random_amount == 1:  # якщо гравець попався, то додається ще + 1 простою
+                        self.prisoner_array[prisoner_index] -= 1  # віднімається ход від поточних відсижених ходів ( тобто гравець сидить довше)
+                        return 1
+                    else:
+                        # якщо гравець не попався, то він виходить достроково
+                        return self.set_free(player, prisoner_index)
+
+        # просто продовжити ?
+
+    def event(self, prisoner):  # !!! уточнити, чи необхідно player ?
         self.prisoner_array.append({prisoner,0})  # додаємо у в'язницю, якщо гравця нема
         prisoner.set_enabled(False)  # ув'язнюємо
         return 1
