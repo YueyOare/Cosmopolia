@@ -119,7 +119,7 @@ class Chance(Map.Field):
         return 1
 
 
-# классы Саши. В данный момент они в виде псевдокода. Описана общая логика
+# классы Саши. В данный момент они почти работают. Описана общая логика
 class Teleport(Map.Field):
     """Клітина телепорт, що телепортує гравця до рандомної точки"""
 
@@ -150,6 +150,10 @@ class Prison(Map.Field):
         player.set_enabled(True)
         return 0
 
+    def get_move_main(self, prisoner):
+        print("Метод get_move_main працює")
+        return 1
+
     def player_choice(self, action, prisoner):  # гравець може вибрати сидіти у в'язниці або спробувати сплатити хабар ( може не спрацювати)
         print("Гравець зробив свій вибір. Метод player_choice працює")
         choice = randint(0, 2)
@@ -163,29 +167,33 @@ class Prison(Map.Field):
                 if action == 1:  # якщо гравець вирішив платити хабар, є шанс на те, що він попадеться
                     # player.set_less_money(value) забираємо грошу
                     if random_amount == 1:  # якщо гравець попався, то додається ще + 1 простою
+                        print("Гравець попався на хабарі і сидить далі")
                         self.prisoner_array[prisoner_index] -= 1  # віднімається ход від поточних відсижених ходів ( тобто гравець сидить довше)
                         return 1
                     else:
                         # якщо гравець не попався, то він виходить достроково
+                        print("Гравець звільнився, заплативши хабар")
                         return self.set_free(player, prisoner_index)
                 elif action == 2:
                     # сидеть дальше
-                    print("Гравець сидить далі")
+                    print("Гравець вибрав сидіти далі")
                     self.prisoner_array[prisoner_index] += 1
                     return 1
                 else:  # с6ежать
                     if random_amount == 1:  # якщо гравець попався, то додається ще + 1 простою
+                        print("Гравець попався при спробі втекти і сидить далі")
                         self.prisoner_array[prisoner_index] -= 1  # віднімається ход від поточних відсижених ходів ( тобто гравець сидить довше)
                         return 1
                     else:
                         # якщо гравець не попався, то він виходить достроково
+                        print("Гравець втік")
                         return self.set_free(player, prisoner_index)
 
         # просто продовжити ?
 
     def event(self, prisoner):  # !!! уточнити, чи необхідно player ?
         print("Викликався event в'язниця")
-        self.prisoner_array.append({prisoner,0})  # додаємо у в'язницю, якщо гравця нема
+        self.prisoner_array.append({prisoner.get_name(),0})  # додаємо у в'язницю, якщо гравця нема
         prisoner.set_enabled(False)  # ув'язнюємо
         return 1
 
@@ -271,4 +279,3 @@ class Casino(Map.Field):
 # casino1.event(player1)
 # startfinish1.event(player1)
 # teleport1.event(player1)
-
