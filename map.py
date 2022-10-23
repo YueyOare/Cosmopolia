@@ -8,11 +8,9 @@ class Map():
     """���� ���� ������ ���� �����"""
 
     class Field():  # ����� ������� �����
-        def __init__(self, name_of_class = 0, number_class = 0):
+        def __init__(self, name_of_class = 0):
             """������ ��������� ������� ����"""
             self.name_of_class = name_of_class
-            self.number_class = number_class
-
         def print_field(self):
             print(self.__name_of_class + self.__number_class)
 
@@ -23,8 +21,18 @@ class Map():
 
     def __init__(self, number=10):
         self.number = number
-        for i in range(number):
-            self.array_Fields.append(i)
+        system1 = System()
+        self.array_Fields.append(StartFinish())
+        self.array_Fields.append(system1.planet())
+        self.array_Fields.append(system1.planet())
+        self.array_Fields.append(system1.planet())
+        self.array_Fields.append(Prison())
+        self.array_Fields.append(Teleport())
+        self.array_Fields.append(Chance())
+        self.array_Fields.append(Casino())
+        self.array_Fields.append(system1.planet())
+        self.array_Fields.append(system1.planet())
+
 
 
 class System():
@@ -59,6 +67,7 @@ class System():
             return self.__owner
 
         def event(self, player):
+            print("Викликався event планети")
             if (self.__owner):  # ������ ���� ���������� �� ��������
                 if (self.__owner == player):
                     return 1
@@ -90,7 +99,7 @@ class Chance(Map.Field):
             self.array_maps.append(i)
 
     def event(self, player):  # ������� ������ �����
-        print("����� chance ������")
+        print("Викликався event шанса")
         return 1
 
 
@@ -159,6 +168,7 @@ class Prison(Map.Field):
         # просто продовжити ?
 
     def event(self, prisoner):  # !!! уточнити, чи необхідно player ?
+        print("Викликався event в'язниця")
         self.prisoner_array.append({prisoner,0})  # додаємо у в'язницю, якщо гравця нема
         prisoner.set_enabled(False)  # ув'язнюємо
         return 1
@@ -208,6 +218,7 @@ class Casino(Map.Field):
 
     def event(self, player):  # івент клітини казіно
         # Random_value ( 0 or 1) - рандомиться цифра 1 або 0, що визначає, піде гравець в казино або в рулетку
+        print("Викликався event казино") 
         random_value = randint(0, 2)
         askamount = randint(0, 2)
         if random_value == 0:  # - якщо зарандомилася цифра 0, відправляємо гравця в казино без права відмовитися
