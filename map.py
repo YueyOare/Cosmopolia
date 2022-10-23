@@ -136,7 +136,7 @@ class Prison(Map.Field):
             if player == prisoner:  # problem !!!!!!! якщо знайшли, що гравець у в'язниці, виконуємо наступні дії
 
                 if action == 1:  # якщо гравець вирішив платити хабар, є шанс на те, що він попадеться
-                    # player.setlessmoney(value) забираємо грошу
+                    # player.set_less_money(value) забираємо грошу
                     if random_amount == 1:  # якщо гравець попався, то додається ще + 1 простою
                         self.prisoner_array[prisoner_index] -= 1  # віднімається ход від поточних відсижених ходів ( тобто гравець сидить довше)
                         return 1
@@ -184,10 +184,10 @@ class Casino(Map.Field):
     def casino(self, player, bet):  # метод казино, що дозволяє гравцю зробити ставку
         print("Метод казино працює")
         number = randint(0, 2)
-        player.setLessMoney(bet)  # ставка зроблена
+        player.set_less_money(bet)  # ставка зроблена
         if number == 1:  # зарандомити число
             print("Гравець виграв")
-            player.setMoreMoney(bet * 3)
+            player.set_more_money(bet * 3)
             return 1
         else:
             print("Гравець програв")
@@ -196,10 +196,10 @@ class Casino(Map.Field):
     def roulette(self, player, bet):  # метод рулетка, що дає можливість гравцю зіграти на великий виграш з вірогідністю померти.
         print("Метод рулетка працює")
         number = randint(0, 2)
-        player.setLessMoney(bet)
+        player.set_less_money(bet)
         if number == 1:  # зарандомити число
             print("Гравець виграв")
-            player.setMoreMoney(bet * 3)
+            player.set_more_money(bet * 3)
             return 1
         else:
             print("Гравець програв і помер")
