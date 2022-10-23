@@ -44,9 +44,9 @@ class Cosmopolia:
             if self.Current_Player.get_move_main(Current_Player) < 3:  # Если в тюрьме меньше трех ходов...
                 action = int(input(
                     "Enter variant of action in prison: 1 - хабарь, 2 - сідіти далі, 3 - збігти"))  # Действие игрока в тюрьме
-                self.result = Prison.player_choise(action, Current_Player)  # здесь нужно поменять
+                self.result = map.array_Fields[4].player_choise(action, Current_Player)  # здесь нужно поменять
             else:
-                self.result = Prison.set_free(Current_Player)
+                self.result = map.array_Fields[4].set_free(Current_Player)
 
     def Player_cube(self, Current_Player):  # действие игрока после броска кубика
         self.Current_Player = Current_Player
