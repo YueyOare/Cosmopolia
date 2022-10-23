@@ -14,7 +14,7 @@ class Cosmopolia:
         self.Current_Player = 0
         self.result = 0
         self.Number_of_sides_of_cube = 12
-        self.Map = map()
+        self.Map = Map()
 
     def Create_Players(self):  # створюємо гравців
         self.Amount_of_Players = int(input("введіть загальну кількість гравців: "))
@@ -52,7 +52,7 @@ class Cosmopolia:
         self.Current_Player = Current_Player
         dice = int(self.Randomaise_dice())  # Кидаем кубик
         self.Current_Player.move_to(dice)  # находим новую позицию игрока
-        Map.array_Fields[self.Current_Player.get_current_field()].event(
+        self.Map.array_Fields[self.Current_Player.get_current_field()].event(
             self.Current_Player)  # Событие с игроком на этой позиции
 
 
