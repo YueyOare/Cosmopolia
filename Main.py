@@ -33,7 +33,7 @@ class Cosmopolia:
         self.first_player = self.Players[randint(0, self.Amount_of_Players - 1)]
 
     def Randomaise_dice(self):  # Кидаємo кубик
-        return randint(0, self.Number_of_sides_of_cube + 1)
+        return randint(1, self.Number_of_sides_of_cube)
 
     def Print_field_to_Player(self, Current_Player):  # Выводим поле на консоль
         print("field")
