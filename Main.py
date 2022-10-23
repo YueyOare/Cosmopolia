@@ -5,7 +5,7 @@ from players import *
 class Cosmopolia:
     """Основний клас гри"""
 
-    def init(self):
+    def __init__(self):
         self.Players = []  # масив гравців
         self.Amount_of_Players = 0  # загальна кількість гравців
         self.Amount_of_Humans = 0  # кількість гравців - людей
