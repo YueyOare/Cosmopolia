@@ -41,10 +41,10 @@ class Cosmopolia:
     def Before_turn(self, Current_Player):  # действия до хода
         self.Print_field_to_Player(Current_Player)  # Выводим поле на консоль
         if not Current_Player.get_enabled():  # Может ли игрок совершать ход? Если нет...
-            if self.Current_Player.get_move_main(Current_Player) < 3:  # Если в тюрьме меньше трех ходов...
+            if self.map.array_Fields[4].get_move_main(Current_Player) < 3:  # Если в тюрьме меньше трех ходов...
                 action = int(input(
                     "Enter variant of action in prison: 1 - хабарь, 2 - сідіти далі, 3 - збігти"))  # Действие игрока в тюрьме
-                self.result = self.map.array_Fields[4].player_choise(action, Current_Player)  # здесь нужно поменять
+                self.result = self.map.array_Fields[4].player_choice(action, Current_Player)  # здесь нужно поменять
             else:
                 self.result = self.map.array_Fields[4].set_free(Current_Player)
 
@@ -58,7 +58,8 @@ class Cosmopolia:
 
 Game = Cosmopolia()
 Game.Create_Players()  # Створюємо гравців
-while True:
+# while True:
+for i in range(5):
     for Current_Player in Game.Players:  # проходимо по циклу гравців
         Game.Before_turn(Current_Player)  # Дії до хода гравця
         if Game.result == 1:  # Якщо ігрок у в'язниці

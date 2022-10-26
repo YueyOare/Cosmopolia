@@ -129,9 +129,9 @@ class Teleport(Map.Field):
     # витягнути з мепу телепорти, щоб телепортувати гравця в рандомну клітину типу "телепорт"
 
     def event(self, player):
-        randomvalue = randint(0, 21)
+        randomvalue = randint(0, 9)
         print("Метод Телепорт працює")
-        Player.set_current_field(randomvalue)
+        player.set_current_field(randomvalue)
         return 1
 
 
