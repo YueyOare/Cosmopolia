@@ -1,4 +1,4 @@
-from map import Map
+from fields import Field
 from random import randint
 from players import Player
 from array import *
@@ -7,7 +7,7 @@ from array import *
 class System():
     """Клас який класифікує нерухомість для можливості покращення"""
 
-    class Planet(Map.Field):  # клас нерухомості
+    class Planet(Field):  # клас нерухомості
         def __init__(self, name_of_planet="earth", price_buy=1345, price_pay=648, owner=0, amount_of_branches=5):
             super().__init__()
             self.__name_of_planet = name_of_planet
@@ -64,7 +64,7 @@ class System():
             self.array_planets.append(i)
 
 
-class Chance(Map.Field):
+class Chance(Field):
     """клас шанс на полі"""
     array_maps = []
 

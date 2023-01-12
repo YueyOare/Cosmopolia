@@ -1,22 +1,13 @@
 from random import randint
 from players import Player
+from fields import Field
+from PlanetChance import *
 
 from array import *
 
 
 class Map():
     """Клас який містить саму мапа"""
-
-    class Field():  # клас клітинок карти
-        def __init__(self, name_of_class = 0):
-            """Основні параметри кожного поля"""
-            self.name_of_class = name_of_class
-        def print_field(self):
-            print(self.__name_of_class)
-
-        def event(self,player):
-            return 1
-
     array_Fields = []
 
     def __init__(self, number=10): # кількість клітинок на полі
@@ -32,7 +23,6 @@ class Map():
         self.array_Fields.append(Casino())
         self.array_Fields.append(system1.planet())
         self.array_Fields.append(system1.planet())
-
 
 
 
