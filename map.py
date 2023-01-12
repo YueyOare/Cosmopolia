@@ -27,7 +27,7 @@ class Map():
 
 
 # классы Саши. В данный момент они почти работают. Описана общая логика
-class Teleport(Map.Field):
+class Teleport(Field):
     """Клітина телепорт, що телепортує гравця до рандомної точки"""
 
     def __init__(self):
@@ -42,7 +42,7 @@ class Teleport(Map.Field):
         return 1
 
 
-class Prison(Map.Field):
+class Prison(Field):
     """Клітина в'язниця, що ув'язнює гравця на 2 ходи ( з можливістю втекти )"""
 
     def __init__(self):
@@ -105,7 +105,7 @@ class Prison(Map.Field):
         return 1
 
 
-class StartFinish(Map.Field):  # скоріш за все, додавати гроші буде зручніше через мейн та гравця
+class StartFinish(Field):  # скоріш за все, додавати гроші буде зручніше через мейн та гравця
     """Клітина початку гри, що видає на кожному колі додатковий капітал"""
 
     def __init__(self):
@@ -116,7 +116,7 @@ class StartFinish(Map.Field):  # скоріш за все, додавати гр
         return 1
 
 
-class Casino(Map.Field):
+class Casino(Field):
     """Клітина казіно, що дає гравцю вибір зіграти в казино або в рулетку"""
 
     def __init__(self):
