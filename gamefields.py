@@ -1,3 +1,4 @@
+import random
 from random import randint
 from fields import Field
 class Teleport(Field):
@@ -10,8 +11,13 @@ class Teleport(Field):
 
     def event(self, player):
         randomvalue = randint(0, 9)
-        print("Метод Телепорт працює")
-        player.set_current_field(randomvalue)
+        curr = player.get_current_field()
+        if random.choice([True, False]):
+            player.move_to(randomvalue)
+            print("Метод Телепорт працює, переміщає на ", randomvalue," клітин уперед")
+        else:
+            player.move_to(-randomvalue)
+            print("Метод Телепорт працює, переміщає на ", randomvalue," клітинок назад")
         return 1
 
 
@@ -105,7 +111,7 @@ class StrategyCasino:
                 print("Ваша ставка має бути додатнім числом")
     def startgame(self,player):  # метод казино, що дозволяє гравцю зробити ставку
         print("Метод казино працює")
-        number = randint(0, 2)
+        number = randint(0, 1)
         bet = self.getagoodbet(player)
         player.set_less_money(bet) # ставка зроблена
         if number == 1:  # зарандомити число
