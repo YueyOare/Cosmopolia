@@ -33,11 +33,9 @@ class Map(metaclass=Singleton):
         self.array_Fields.append(planet)
         self.array_Fields.append(planet)
 
-
-
-
-
-
+    player1 = Player(name="player1", is_human=1)
+    startfinish1 = StartFinish()
+    startfinish1.event(player1)
 # Map1 = Map()
 # Field1 = Map1.Field("����", 2)
 # System1 = System("Sun", 2, "sputniki", 8139838)
@@ -47,15 +45,10 @@ class Map(metaclass=Singleton):
 # Planet1 = System1.planet("Mars", 2222, 111, "Bot")
 # Planet11.print_planet()
 # Planet1.event(2)
-#
-# player1 = Player(name="player1", is_human=1)
 # casino1 = Casino()
 # prison1 = Prison()
-# startfinish1 = StartFinish()
 # teleport1 = Teleport()
-#
 # prison1.event(player1)
 # prison1.event(player1)
 # casino1.event(player1)
-# startfinish1.event(player1)
 # teleport1.event(player1)

@@ -15,7 +15,7 @@ class Teleport(Field):
         return 1
 
 
-class Prison(Field):
+class Prison(Field): # state патерн - сможем разделить состояние игрока (свободен/в тюрьме)
     """Клітина в'язниця, що ув'язнює гравця на 2 ходи ( з можливістю втекти )"""
 
     def __init__(self):
@@ -78,61 +78,86 @@ class Prison(Field):
         return 1
 
 
-class StartFinish(Field):  # скоріш за все, додавати гроші буде зручніше через мейн та гравця
+class StartFinish(Field):  # видавати гроші необхідно і тоді, коли гравець проходить повз неї, тому це буде визначатися у гравця, але клітина має існувати
     """Клітина початку гри, що видає на кожному колі додатковий капітал"""
 
     def __init__(self):
         super().__init__()
 
-    def event(self, Player):
+    def event(self, player):
         print("Метод СтартФініш працює")
         return 1
 
+class StrategyCasino:
+    """Разділення міні-ігор на підкласи. Виконується, якщо вибір гравця - казино"""
+    def getagoodbet(self,player):
+        while True:
+            try:
+                bet = input("Гравець, вашa ставкa: ")
+                bet = int(bet)
+                if bet > player.get_money():
+                    print("Ставка є більшою за поточний рахунок гравця. Статки гравця ",player.get_name(),": ",player.get_money())
+                elif bet <= 0:
+                    print("Ваша ставка має бути більшою за 0")
+                else:
+                    return bet
+            except ValueError:
+                print("Ваша ставка має бути додатнім числом")
+    def startgame(self,player):  # метод казино, що дозволяє гравцю зробити ставку
+        print("Метод казино працює")
+        number = randint(0, 2)
+        bet = self.getagoodbet(player)
+        player.set_less_money(bet) # ставка зроблена
+        if number == 1:  # зарандомити число
+            print("Гравець ",player.get_name()," виграв")
+            player.set_more_money(bet * 3)
+            return 1
+        else:
+            print("Гравець ",player.get_name()," програв")
+            return 1  # гравець програв, завершити програму
 
-class Casino(Field):
+class StrategyRoulette:
+    """Разділення міні-ігор на підкласи. Виконується, якщо вибір гравця - рулетка"""
+    def startgame(self,player):# метод рулетка, що дає можливість гравцю зіграти на великий виграш з вірогідністю померти.
+        print("Метод рулетка працює")
+        number = randint(0, 2)
+        bet = player.get_money()# граємо на весь капітал (мертвим гроші не потрібні)
+        player.set_less_money(bet)
+        if number == 1:  # зарандомити число
+            print("Гравець ",player.get_name(),"виграв ",bet*3,"космічних монет")
+            player.set_more_money(bet * 3)
+            return 1
+        else:
+            print("Гравець ",player.get_name()," програв і помер")
+            player.set_died()
+            return 1  # гравець програв і помер, завершити програму
+
+
+class Casino(Field):# strategy паттерн -разделить мини-игры казино ( казино, рулетка) на отдельные подклассы, чтобы не загружать само казино и была возможность внедрять новые миниигры
     """Клітина казіно, що дає гравцю вибір зіграти в казино або в рулетку"""
 
     def __init__(self):
         super().__init__()
-
-    def casino(self, player, bet):  # метод казино, що дозволяє гравцю зробити ставку
-        print("Метод казино працює")
-        number = randint(0, 2)
-        player.set_less_money(bet)  # ставка зроблена
-        if number == 1:  # зарандомити число
-            print("Гравець виграв")
-            player.set_more_money(bet * 3)
-            return 1
-        else:
-            print("Гравець програв")
-            return 1  # гравець програв, завершити програму
-
-    def roulette(self, player, bet):  # метод рулетка, що дає можливість гравцю зіграти на великий виграш з вірогідністю померти.
-        print("Метод рулетка працює")
-        number = randint(0, 2)
-        player.set_less_money(bet)
-        if number == 1:  # зарандомити число
-            print("Гравець виграв")
-            player.set_more_money(bet * 3)
-            return 1
-        else:
-            print("Гравець програв і помер")
-            player.set_died()
-            return 1  # гравець програв і помер, завершити програму
+        self.casino = StrategyCasino()
+        self.roulette = StrategyRoulette()
 
     def event(self, player):  # івент клітини казіно
-        # Random_value ( 0 or 1) - рандомиться цифра 1 або 0, що визначає, піде гравець в казино або в рулетку
         print("Викликався event казино")
         random_value = randint(0, 2)
-        askamount = randint(0, 2)
         if random_value == 0:  # - якщо зарандомилася цифра 0, відправляємо гравця в казино без права відмовитися
             # вернуть число, которое означает, что выбрано казино, чтобы спросить, будет ли игрок играть или нет
-            return self.casino(player, 0)
-        else:  # інакше відправляємо гравця в рулетку, і даємо право відмовитися
-            # Ask Asya for number - питаю в мейну вибір гравця
+            askamount = input("Граємо в казино? [1/0]: ")
+            askamount = int(askamount)
             if askamount == 1:  # якщо гравець вибрав грати, відправляюємо в рулетку
-                # вернуть число, означающее игру в рулетку, чтобы спросить, будет ли игрок играть или нет
-                return self.roulette(player, 0)
-            else:  # якщо гравець відмовився,  завершити гру
-                print("Гравець відмовився")
+                return self.casino.startgame(player)
+            else:  # якщо гравець відмовився, завершити гру
+                print("Гравець",player.get_name(),"відмовився")
+                return 1
+        else:  # інакше відправляємо гравця в рулетку, і даємо право відмовитися
+            askamount = input("Пограємо в рулетку на смерть? [1/0]: ")
+            askamount = int(askamount)
+            if askamount == 1:  # якщо гравець вибрав грати, відправляюємо в рулетку
+                return self.roulette.startgame(player)
+            else:  # якщо гравець відмовився, завершити гру
+                print("Гравець",player.get_name(),"відмовився")
                 return 1
