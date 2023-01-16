@@ -1,26 +1,37 @@
 from PlanetChance import *
 from gamefields import *
-
+from threading import Lock
 from array import *
 
 
-class Map():
+class Singleton(type):
+  _instances = {}
+  _lock: Lock = Lock()
+  def __call__(cls, *args, **kwargs):
+      with cls._lock:
+          if cls not in cls._instances:
+              instance = super().__call__(*args, **kwargs)
+              cls._instances[cls] = instance
+      return cls._instances[cls]
+
+class Map(metaclass=Singleton):
     """Клас який містить саму мапа"""
     array_Fields = []
 
     def __init__(self, number=10): # кількість клітинок на полі
         self.number = number
         system1 = System() # створення мапи
+        planet = system1.Planet()
         self.array_Fields.append(StartFinish())
-        self.array_Fields.append(system1.planet())
-        self.array_Fields.append(system1.planet())
-        self.array_Fields.append(system1.planet())
+        self.array_Fields.append(planet)
+        self.array_Fields.append(planet)
+        self.array_Fields.append(planet)
         self.array_Fields.append(Prison())
         self.array_Fields.append(Teleport())
         self.array_Fields.append(Chance())
         self.array_Fields.append(Casino())
-        self.array_Fields.append(system1.planet())
-        self.array_Fields.append(system1.planet())
+        self.array_Fields.append(planet)
+        self.array_Fields.append(planet)
 
 
 
