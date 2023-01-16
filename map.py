@@ -33,9 +33,9 @@ class Map(metaclass=Singleton):
         self.array_Fields.append(planet)
         self.array_Fields.append(planet)
 
-    player1 = Player(name="player1", is_human=1)
-    startfinish1 = StartFinish()
-    startfinish1.event(player1)
+
+   # startfinish1 = StartFinish()
+    #startfinish1.event(player1)
 # Map1 = Map()
 # Field1 = Map1.Field("����", 2)
 # System1 = System("Sun", 2, "sputniki", 8139838)
