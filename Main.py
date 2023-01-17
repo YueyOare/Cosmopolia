@@ -1,6 +1,20 @@
 from map import *
 from players import *
 
+class Builder: # створення гравця
+    def __init__(self):
+        self.player = Player()
+    def build(self):
+        return self.player
+    def name(self, N):
+        self.player.name = N
+        return self
+    def id(self, i):
+        self.player.id = i
+        return self
+    def is_human(self, isH):
+        self.player.is_human = isH
+        return self
 class Cosmopolia:
     """Основний клас гри"""
 
@@ -17,52 +31,50 @@ class Cosmopolia:
 
     def Create_Players(self):  # створюємо гравців
         self.Amount_of_Players = int(input("введіть загальну кількість гравців: "))
-        self.Amount_of_Humans = int(input("введіть кількість живих гравців: "))
-        for i in range(self.Amount_of_Humans):  # дамо ім'я гравцям-люядям та занесемо їх в масив
-            Name = input("введіть ім'я гравця: ")
-            player = Player(name=Name, id=i, is_human=1)
-            self.Players.append(player)
-        self.Amount_of_Bots = self.Amount_of_Players - self.Amount_of_Humans  # знаходимо кількість ботів
-        for i in range(self.Amount_of_Bots):  # дамо ім'я гравцям-ботам та занесемо їх в масив
-            Name = input("введіть ім'я бота: ")
-            player = Player(name=Name, id=i + self.Amount_of_Humans, is_human=0)
+        for i in range(self.Amount_of_Players):  # дамо ім'я гравцям та занесемо їх в масив
+            b = Builder()
+            N = input("введіть ім'я гравця: ")
+            isH = int(input("введіть 1, якщо гравець людина, та 0, якщо гревець бот"))
+            player = b.build()
+            player = b.name(N)
+            player = b.id(i)
+            player = b.is_human(isH)
             self.Players.append(player)
 
     def Randomaise_first_player(self):  # генеруємо першого гравця, що здійснює хід
         self.first_player = self.Players[randint(0, self.Amount_of_Players - 1)]
 
-    def Randomaise_dice(self):  # Кидаємo кубик
+    def Randomaise_dice(self):  # кидаємo кубик
         return randint(1, self.Number_of_sides_of_cube)
 
-    def Print_field_to_Player(self, Current_Player):  # Выводим поле на консоль
+    def Print_field_to_Player(self, Current_Player):  # виводимо поле на консоль
         print("field")
 
-    def Before_turn(self, Current_Player):  # действия до хода
-        self.Print_field_to_Player(Current_Player)  # Выводим поле на консоль
-        if not Current_Player.get_enabled():  # Может ли игрок совершать ход? Если нет...
-            if self.map.array_Fields[4].get_move_main(Current_Player) < 3:  # Если в тюрьме меньше трех ходов...
+    def Before_turn(self, Current_Player):  # дії до хода
+        self.Print_field_to_Player(Current_Player)  # виводимо поле на консоль
+        if not Current_Player.get_enabled():  # чи може гравець здійснювати хід? Якщо ні...
+            if self.map.array_Fields[4].get_move_main(Current_Player) < 3:  # якщо у в'язниці менше трьох ходів...
                 action = int(input(
-                    "Enter variant of action in prison: 1 - хабарь, 2 - сідіти далі, 3 - збігти"))  # Действие игрока в тюрьме
+                    "Enter variant of action in prison: 1 - хабарь, 2 - сідіти далі, 3 - збігти"))  # дія гравця у в'язниці
                 self.result = self.map.array_Fields[4].player_choice(action, Current_Player)  # здесь нужно поменять
             else:
                 self.result = self.map.array_Fields[4].set_free(Current_Player)
 
-    def Player_cube(self, Current_Player):  # действие игрока после броска кубика
+    def Player_cube(self, Current_Player):  # дія гравця після кидка кубика
         self.Current_Player = Current_Player
-        dice = int(self.Randomaise_dice())  # Кидаем кубик
-        self.Current_Player.move_to(dice)  # находим новую позицию игрока
+        dice = int(self.Randomaise_dice())  # кидаємо кубик
+        self.Current_Player.move_to(dice)  # знаходимо нову позицію гравця
         self.map.array_Fields[self.Current_Player.get_current_field()].event(
-            self.Current_Player)  # Событие с игроком на этой позиции
-
+            self.Current_Player)  # подія з гравцем на цій позиції
 
 Game = Cosmopolia()
-Game.Create_Players()  # Створюємо гравців
+Game.Create_Players()  # створюємо гравців
 # while True:
 for i in range(5):
     for Current_Player in Game.Players:  # проходимо по циклу гравців
-        Game.Before_turn(Current_Player)  # Дії до хода гравця
-        if Game.result == 1:  # Якщо ігрок у в'язниці
+        Game.Before_turn(Current_Player)  # дії до хода гравця
+        if Game.result == 1:  # якщо ігрок у в'язниці
             continue
-        Game.Player_cube(Current_Player)  # Дії під час хода гравця
+        Game.Player_cube(Current_Player)  # дії під час хода гравця
     Current_Player = Game.Players[0]  # після проходження масива повертаємося до першого гравця в масиві
 
