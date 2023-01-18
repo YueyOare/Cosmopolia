@@ -42,7 +42,7 @@ class Prison(Field):
         if player.get_name() in self.prisoner_array:
             if action == 1:  # якщо гравець вирішив платити хабар, є шанс на те, що він попадеться
                 if value >= player.get_money():
-                    return 2
+                    return 0
                 else:
                     player.set_less_money(value)  # забираємо грошу
                     if random_amount == 1:  # якщо гравець попався, то додається ще + 1 простою
