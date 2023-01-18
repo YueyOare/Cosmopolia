@@ -1,20 +1,7 @@
 from map import *
 from players import *
 
-class Builder: # створення гравця
-    def __init__(self):
-        self.player = Player()
-    def build(self):
-        return self.player
-    def name(self, N):
-        self.player.name = N
-        return self
-    def id(self, i):
-        self.player.id = i
-        return self
-    def is_human(self, isH):
-        self.player.is_human = isH
-        return self
+
 class Cosmopolia:
     """Основний клас гри"""
 
@@ -28,7 +15,8 @@ class Cosmopolia:
         self.result = 0
         self.Number_of_sides_of_cube = 12
         self.map = Map()
-
+    def Randomaise_first_player(self):  # генеруємо першого гравця, що здійснює хід
+        self.first_player = self.Players[randint(0, self.Amount_of_Players - 1)]
     def Create_Players(self):  # створюємо гравців
         self.Amount_of_Players = int(input("введіть загальну кількість гравців: "))
         for i in range(self.Amount_of_Players):  # дамо ім'я гравцям та занесемо їх в масив
@@ -40,10 +28,6 @@ class Cosmopolia:
             player = b.id(i)
             player = b.is_human(isH)
             self.Players.append(player)
-
-    def Randomaise_first_player(self):  # генеруємо першого гравця, що здійснює хід
-        self.first_player = self.Players[randint(0, self.Amount_of_Players - 1)]
-
     def Randomaise_dice(self):  # кидаємo кубик
         return randint(1, self.Number_of_sides_of_cube)
 
@@ -66,6 +50,21 @@ class Cosmopolia:
         self.Current_Player.move_to(dice)  # знаходимо нову позицію гравця
         self.map.array_Fields[self.Current_Player.get_current_field()].event(
             self.Current_Player)  # подія з гравцем на цій позиції
+class Builder:
+    def __init__(self):
+        self.player = Player()
+        self.i = 0
+    def build(self):
+        return self.player
+    def name(self, N):
+        self.player.name = N
+        return self
+    def id(self, i):
+        self.player.id = i
+        return self
+    def is_human(self, isH):
+        self.player.is_human = isH
+        return self
 
 Game = Cosmopolia()
 Game.Create_Players()  # створюємо гравців
