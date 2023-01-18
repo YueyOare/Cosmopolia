@@ -1,4 +1,5 @@
 from fields import Field
+from gamefields import *
 from random import randint
 from players import Player
 from array import *
@@ -27,7 +28,7 @@ class System():
             print("Метод upgrade працює")
             player.set_less_money(self.__cost_of_branches)
             self.__branches+=1
-            self.__price_pay+=10
+            self.__price_pay+= self.__rent_increase
             return 1
 
         def pay(self,player, owner):  # метод оплати оренди
@@ -39,6 +40,7 @@ class System():
         def buy(self, player):  # метод покупки планети
             print("Метод buy працює")
             player.set_less_money(self.__price_buy)
+            player.own_planet(self)
             self.set_owner(player)
             return 1
 
@@ -54,12 +56,13 @@ class System():
 
     array_planets = []
 
-    def __init__(self, name_of_sysytem="Sunny", amount_of_planet=10, branches="Sput", cost_of_branches=1993):
+    def __init__(self, name_of_sysytem="Sunny", amount_of_planet=10, branches="Sput", cost_of_branches=1993, rent_increase = 30):
         super().__init__()
         self.__name_of_sysytem = name_of_sysytem
         self.__amount_of_planet = amount_of_planet
         self.__branches = branches  # філіали
         self.__cost_of_branches = cost_of_branches
+        self.__rent_increase = rent_increase
         for i in range(amount_of_planet):
             self.array_planets.append(i)
 
@@ -68,9 +71,11 @@ class Chance(Field):
     """клас шанс на полі"""
     array_maps = []
 
-    def __init__(self, amount_of_maps=20):  # кількість карт шансу
+    def __init__(self, amount_of_maps=20, cache = 10, string = "Player took card"):  # кількість карт шансу
         super().__init__()
         self.__amount_of_maps = amount_of_maps
+        self.__cache = cache
+        self.__string = string
         for i in range(amount_of_maps): # масив карт
             self.array_maps.append(i)
 
@@ -78,11 +83,16 @@ class Chance(Field):
         print("Викликався event шанса")
         random_amount = randint(0, 3) # варіації шансу
         if random_amount==0:
-            player.set_more_money(+100)
+            print(self.__string)
+            player.set_more_money(+ self.__cache)
         elif random_amount==1:
-            player.set_less_money(-100)
+            print(self.__string)
+            player.set_less_money(self.__cache)
         elif random_amount==2:
+            print(self.__string)
+            player.move_to()
             return "go to prison"
         else:
+            print(self.__string)
             return "go around to start"
         return 1
