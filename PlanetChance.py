@@ -24,7 +24,11 @@ class System():
             self.__rent_increase = rent_increase
 
         def print_planet(self):
-            print(self.__name_of_planet, self.__price_buy, self.__price_pay, self.__owner,  self.__amount_of_branches )
+            if self.__owner == 0:
+              print(self.__name_of_planet, self.__price_buy, self.__price_pay, self.__amount_of_branches, "none owner" )
+            else: 
+              print(self.__name_of_planet, self.__price_buy, self.__price_pay, self.__amount_of_branches, self.__owner.get_name() )
+
 
         def set_owner(self, player):  # метод зміни власника нерухомості
             #print("Метод set_owner працює")
@@ -39,7 +43,6 @@ class System():
         def pay(self,player):  # метод оплати оренди
             #print("Метод pay працює")
             if player.get_money() < self.__price_pay:
-                print("Ne")
                 return "Player does not have enough money to buy"
             player.set_less_money(self.__price_pay)
             self.__owner.set_more_money(self.__price_pay)
@@ -48,7 +51,6 @@ class System():
         def buy(self, player):  # метод покупки планети
             #print("Метод buy працює")
             if player.get_money() < self.__price_buy:
-                print("Ne")
                 return "Player does not have enough money to buy"
             player.set_less_money(self.__price_buy)
             player.own_planet(self)
