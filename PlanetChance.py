@@ -48,9 +48,10 @@ class System():
             print("Викликався event планети")
             if (self.__owner):  # якщо у поля є власник
                 if (self.__owner == player): # якщо власник поля - гравець, що став на поле
-                    return "player must pay"
+                    return "player is in his field"
                 else:  # якщо власник хтось інший
-                    self.pay(player, self.__owner)
+                    self.pay(player)
+                    return "player must pay"
             else:
                 return "player can buy"  # якщо поле не має власник, повертається питання про купівлю нерухомості
 
@@ -108,6 +109,7 @@ class Chance(Field):
 #planet12.pay(player1)
 #planet12.upgrade()
 #planet12.print_planet()
+#planet12.event(player1)
 
 #chance = Chance()
 #chance.event(player1)
