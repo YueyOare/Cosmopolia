@@ -57,32 +57,25 @@ class Cosmopolia:
         word = self.map.array_Fields[self.Current_Player.get_current_field()].event(
             self.Current_Player)  # подія з гравцем на цій позиції
         second_action = Console_fields(Current_Player)  # викликаємо дію гравця на полі
-        second_action.switch(word)
+        second_action.switch_first(word)
 class Console_fields:
     """Клас взаємодії полей з користувачем"""
     def __init__(self, player = Player()):
         self.word = ""
         self.player = player
         self.bid = 0
-    def switch(self, ev): # вибір поля, на який потравив гравець
+    def switch_first(self, ev): # вибір поля, на який потравив гравець
         self.word = ev
         if self.word == "Casino": # гравець потравив на поле казино
             self.bid =int(input("Ви на клітинці Казино. Виберіть ставку: ")) # гравець вибирає ставку
             while True:
                 if self.bid > 1 and self.bid < self.player.get_money(): # перевірка коректності введених даних користувачем
                     game = StrategyCasino()
-                    word = game.startgame(self.player, self.bid)                #!!!!!!!!! вызывается свитч только один раз, для результата нужен второй
+                    res = game.startgame(self.player, self.bid)  #!!!!!!!!! вызывается свитч только один раз, для результата нужен второй
+                    self.switch_second(res)
                     break
                 print("Ставка некорректна. Гравець ", self.player.get_name(), " має таку суму грошей: ", self.player.get_money)
                 self.bid =int(input("Виберіть ставку: "))
-        elif self.word == "WinCasino": # гравець виграв в казино
-            print("Перемога. Гравець ", self.player.get_name(), " виграв ", self.bid*3,", тепер має таку суму грошей: ", self.player.get_money)
-        elif self.word == "LoseCasino": # гравець програв в казино
-            print("Програш. Гравець ", self.player.get_name(), " програв ", self.bid, ", залишок: ", self.player.get_money)
-        elif self.word == "WinRoulette": # гравець виграв в рулетку
-            print("Перемога. Гравець ", self.player.get_name(), " тепер має таку суму грошей: ", self.player.get_money)
-        elif self.word == "LoseRoulette": # гравець програв в рулетку
-            pass
         elif self.word == "Free": # гравця було звільнено зі в'язниці
             print("Гравця ", self.player.get_name(), " було звільнено зі в'язниці")
         elif self.word == "Teleport": # гравець на полі телепорт
@@ -96,7 +89,8 @@ class Console_fields:
             while True:
                 if answer == 1: # якщо так - граємо
                     game = StrategyRoulette()
-                    game.startgame(self.player)
+                    res = game.startgame(self.player)
+                    self.switch_second(res)
                     break
                 elif answer == 0: # якщо ні, йдемо далі
                     break
@@ -105,15 +99,25 @@ class Console_fields:
             payment = System().Planet()
             payment.pay(self.player)
         elif self.word == "player can buy": # гравець потрапил на вільне поле, чи хочете його купити?
-            answer = input("Ви потрапили на вільне поле, чи хочете його купити? 1 - так, 0 - ні: ")
             while True:
+                answer = int(input("Ви потрапили на вільне поле, чи хочете його купити? 1 - так, 0 - ні: "))
                 if answer == 1:
                     payment = System().Planet() # якщо так, покупає
                     payment.buy(self.player)
                     break
                 elif answer == 0: # якщо ні, йдемо далі
                     break
-
+    def switch_second(self, res):  # результати казино та рулетки
+        self.word = res
+        if self.word == "WinCasino": # гравець виграв в казино
+            print("Перемога. Гравець ", self.player.get_name(), " виграв ", self.bid*3,", тепер має таку суму грошей: ", self.player.get_money)
+        elif self.word == "LoseCasino": # гравець програв в казино
+            print("Програш. Гравець ", self.player.get_name(), " програв ", self.bid, ", залишок: ", self.player.get_money)
+        elif self.word == "WinRoulette": # гравець виграв в рулетку
+            print("Перемога. Гравець ", self.player.get_name(), " тепер має таку суму грошей: ", self.player.get_money)
+        elif self.word == "LoseRoulette": # гравець програв в рулетку
+            print("Програш. Гравець ", self.player.get_name(), " помер :)")
+            self.player.set_died()
 
 """class Builder:
     def __init__(self):
