@@ -71,7 +71,7 @@ class Console_fields:
             while True:
                 if self.bid > 1 and self.bid < self.player.get_money(): # перевірка коректності введених даних користувачем
                     game = StrategyCasino()
-                    res = game.startgame(self.player, self.bid)  #!!!!!!!!! вызывается свитч только один раз, для результата нужен второй
+                    res = game.startgame(self.player, self.bid) # граємо в казино
                     self.switch_second(res)
                     break
                 print("Ставка некорректна. Гравець ", self.player.get_name(), " має таку суму грошей: ", self.player.get_money)
