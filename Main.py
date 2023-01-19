@@ -85,8 +85,8 @@ class Console_fields:
         elif self.word == "StartFinish": # гравець потравив на поле Старт/Фіниш
             print("Ви потрапили на клітинку Старт/Фініш")
         elif self.word == "Roulette": # гравець потравив на поле рулетка. Чи хоче він грати?
-            answer = input("Ви потрапили на клітинку Рулетка. Чи хочете зіграти на свое життя? 1 - Так, 0 - Ні")
             while True:
+                answer = int(input("Ви потрапили на клітинку Рулетка. Чи хочете зіграти на свое життя? 1 - Так, 0 - Ні"))
                 if answer == 1: # якщо так - граємо
                     game = StrategyRoulette()
                     res = game.startgame(self.player)
