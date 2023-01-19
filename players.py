@@ -52,7 +52,6 @@ class Player:
         return self.__current_field
 
     def set_current_field(self, number):
-        print('Тепер гравець', self.__name, 'знаходиться на клітинці', self.__current_field)
         self.__current_field = number
 
     def get_enabled(self):
@@ -60,10 +59,6 @@ class Player:
 
     def set_enabled(self, enabled):
         self.__enabled = enabled
-        if self.__enabled:
-            print('Тепер гравець', self.__name, 'може ходити\n')
-        else:
-            print('Тепер гравець', self.__name, 'не може ходити\n')
 
     def get_skipped_in_a_row(self):
         return self.__skipped_in_a_row
@@ -79,11 +74,9 @@ class Player:
 
     def set_more_money(self, value):
         self.set_money(self.__money + value)
-        print('Тепер у гравця', self.__name, self.__money, 'грошей')
 
     def set_less_money(self, value):
         self.set_money(self.__money - value)  # додати перевірку self.__money - value > 0
-        print('Тепер у гравця', self.__name, self.__money, 'грошей')
 
     def is_bankroot(self):
         return self.__money == 0
@@ -91,33 +84,18 @@ class Player:
     # переміщує гравця на dice_roll клітинок вперед
     def move_to(self, dice_roll):
         self.set_current_field((self.__current_field + dice_roll) % n)
-        print('Тепер гравець', self.__name, 'знаходиться на клітинці', self.__current_field)
+        return self.__current_field
 
     def own_planet(self, planet):
-        print('Тепер гравець', self.__name, 'володіє планетою', planet)
         self.__own_planets.append(planet)
 
     def disown_planet(self, planet):
-        print('Гравець', self.__name, 'більше не володіє планетою', planet)
         # видалити цю планету зі списку
         return
 
     def can_upgrade(self):
-        print('В гравця', self.__name, 'немає планет для апгрейду')
         return False  # перевірити чи є планети, які можна апгрейднути
 
     def set_died(self):
         # видалити всю інфу про гравця
-        print('Гравця', self.__name, 'майже видалено')
         return
-
-# player1 = Player(name="player1", is_human=1)
-# player2 = Player(name="player2", is_human=1)
-# player3 = Player(name="player3", is_human=0)
-
-# print(player1.get_money())
-# player1.setMoreMoney(50)
-# print(player1.get_money())
-# print(player1.get_current_field())
-# player1.move_to(randint(0, 7))
-# print(player1.get_current_field())
