@@ -96,12 +96,22 @@ class Console_fields:
                     break
         elif self.word == "player must pay": # гравець потрапил на чуже поле, тому повинен заплатити аренду
             print("Ви потрапили на чуже поле, тому повинні заплатити аренду")
+            payment = System().Planet()  # якщо так, покупає
+            re = payment.pay(self.player)
+            if re == "Player does not have enough money to pay":
+                print("Недостатньо грошей для сплати")
+            elif re == "Player pay rent":
+                "Гравець вдало сплатив аренду"
         elif self.word == "player can buy": # гравець потрапил на вільне поле, чи хочете його купити?
             while True:
                 answer = int(input("Ви потрапили на вільне поле, чи хочете його купити? 1 - так, 0 - ні: "))
                 if answer == 1:
                     payment = System().Planet() # якщо так, покупає
-                    payment.buy(self.player)
+                    re = payment.buy(self.player)
+                    if re == "Player does not have enough money to buy":
+                        print("Недостатньо грошей для покупки")
+                    elif re == "Player buy planet":
+                        "Покупка завершена"
                     break
                 elif answer == 0: # якщо ні, йдемо далі
                     break
