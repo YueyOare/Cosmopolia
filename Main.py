@@ -96,8 +96,6 @@ class Console_fields:
                     break
         elif self.word == "player must pay": # гравець потрапил на чуже поле, тому повинен заплатити аренду
             print("Ви потрапили на чуже поле, тому повинні заплатити аренду")
-            payment = System().Planet()
-            payment.pay(self.player)
         elif self.word == "player can buy": # гравець потрапил на вільне поле, чи хочете його купити?
             while True:
                 answer = int(input("Ви потрапили на вільне поле, чи хочете його купити? 1 - так, 0 - ні: "))
@@ -107,6 +105,8 @@ class Console_fields:
                     break
                 elif answer == 0: # якщо ні, йдемо далі
                     break
+        elif self.word == "player is in his field":
+            print("Ви потрапили на своє поле")
     def switch_second(self, res):  # результати казино та рулетки
         self.word = res
         if self.word == "WinCasino": # гравець виграв в казино
