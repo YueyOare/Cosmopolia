@@ -2,8 +2,10 @@ from PlanetChance import *
 from gamefields import *
 from threading import Lock
 from array import *
+from Configuration import Config
 
 
+config = Config()
 class Singleton(type):
   _instances = {}
   _lock: Lock = Lock()
@@ -22,16 +24,19 @@ class Map(metaclass=Singleton):
         self.number = number
         system1 = System() # створення мапи
         planet = system1.Planet()
-        self.array_Fields.append(StartFinish())
-        self.array_Fields.append(planet)
-        self.array_Fields.append(planet)
-        self.array_Fields.append(planet)
-        self.array_Fields.append(Prison())
-        self.array_Fields.append(Teleport())
-        self.array_Fields.append(Chance())
-        self.array_Fields.append(Casino())
-        self.array_Fields.append(planet)
-        self.array_Fields.append(planet)
+        for i in range(config.fields_amount):
+            if config.array_Fields[i] == "старт":
+                self.array_Fields.append(StartFinish())
+            elif config.array_Fields[i] == "планета":
+                self.array_Fields.append(planet)
+            elif config.array_Fields[i] == "тюрма":
+                self.array_Fields.append(Prison())
+            elif config.array_Fields[i] == "телепорт":
+                self.array_Fields.append(Teleport())
+            elif config.array_Fields[i] == "шанс":
+                self.array_Fields.append(Chance())
+            elif config.array_Fields[i] == "казіно":
+                self.array_Fields.append(Casino())
 
 
    # startfinish1 = StartFinish()
@@ -52,3 +57,4 @@ class Map(metaclass=Singleton):
 # prison1.event(player1)
 # casino1.event(player1)
 # teleport1.event(player1)
+

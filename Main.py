@@ -168,14 +168,14 @@ class Console_fields:
         self.player.is_human = isH
         return self"""
 
-Game = Cosmopolia()
-Game.Create_Players()  # створюємо гравців
-# while True:
-for i in range(5):
-    for Current_Player in Game.Players:  # проходимо по циклу гравців
-        Game.Before_turn(Current_Player)  # дії до хода гравця
-        if Game.result == 0:  # якщо ігрок у в'язниці
-            continue
-        Game.Player_cube(Current_Player)  # дії під час хода гравця
-    Current_Player = Game.Players[0]  # після проходження масива повертаємося до першого гравця в масиві
+# Game = Cosmopolia()
+# Game.Create_Players()  # створюємо гравців
+# # while True:
+# for i in range(5):
+#     for Current_Player in Game.Players:  # проходимо по циклу гравців
+#         Game.Before_turn(Current_Player)  # дії до хода гравця
+#         if Game.result == 0:  # якщо ігрок у в'язниці
+#             continue
+#         Game.Player_cube(Current_Player)  # дії під час хода гравця
+#     Current_Player = Game.Players[0]  # після проходження масива повертаємося до першого гравця в масиві
 
