@@ -1,7 +1,7 @@
 from fields import Field
 from gamefields import *
 from random import randint
-from players import Player
+from players import *
 from array import *
 from abc import ABC, abstractmethod
 from enum import Enum
