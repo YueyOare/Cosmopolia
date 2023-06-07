@@ -12,7 +12,7 @@ class System():
     """Клас який класифікує нерухомість для можливості покращення"""
 
     class Planet(Field):  # клас нерухомості
-        def __init__(self, name_of_planet="earth", price_buy=13, price_pay=648, owner = 0, amount_of_branches=0,  branches="Sput", cost_of_branches=1993, rent_increase = 30):
+        def __init__(self, name_of_planet="earth", price_buy=13, price_pay=648, owner = 0, amount_of_branches=0,  branches="супутники", cost_of_branches=1993, rent_increase=30):
             super().__init__()
             self.__name_of_planet = name_of_planet
             self.__price_buy = price_buy # ціна покупки
