@@ -53,7 +53,7 @@ class Map(metaclass=Singleton):
                 self.array_Fields_in_map.append(Casino())
 
 
-Map1 = Map()
+# Map1 = Map()
 
 #startfinish1 = StartFinish()
 #startfinish1.event(player1)

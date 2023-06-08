@@ -2,8 +2,10 @@ import tkinter.font as tkfont
 import tkinter as tk
 from map_gui import MapGUI
 from Configuration import Config
+from players import *
 
 config = Config()
+general_map = None
 
 
 class StartMenuGUI:
@@ -16,7 +18,8 @@ class StartMenuGUI:
         self.button_font = tkfont.Font(family="Comic Sans MS", size=16, weight="bold")
         self.heading_font = tkfont.Font(family="Comic Sans MS", size=64, weight="bold")
 
-        self.label1 = tk.Label(self.parent, text="Cosmopolia", bg=config.colour_background, font=self.heading_font, fg=config.colour_text)
+        self.label1 = tk.Label(self.parent, text="Cosmopolia", bg=config.colour_background, font=self.heading_font,
+                               fg=config.colour_text)
         self.label1.grid(row=0, pady=50, sticky="nsew")  # Center label horizontally and vertically
 
         self.button1 = tk.Button(self.parent, text="Розпочати гру", command=button1, font=self.button_font,
@@ -24,7 +27,8 @@ class StartMenuGUI:
                                  fg=config.colour_text, relief=tk.RAISED)
         self.button1.grid(row=1, pady=20)  # Center button horizontally
 
-        self.button2 = tk.Button(self.parent, text="Вийти", command=button2, font=self.button_font, bg=config.colour_button,
+        self.button2 = tk.Button(self.parent, text="Вийти", command=button2, font=self.button_font,
+                                 bg=config.colour_button,
                                  fg=config.colour_text, relief=tk.RAISED)
         self.button2.grid(row=2, pady=20)  # Center button horizontally
 
@@ -88,7 +92,8 @@ class PlayerCreationGUI:
             widget.destroy()
 
         self.parent1.grid_forget()
-        self.label3 = tk.Label(self.parent2, text="Введіть імена гравців та оберіть, людина вони чи бот", bg=config.colour_background,
+        self.label3 = tk.Label(self.parent2, text="Введіть імена гравців та оберіть, людина вони чи бот",
+                               bg=config.colour_background,
                                font=self.heading_font,
                                fg=config.colour_text)
         self.label3.grid(row=0, column=0, columnspan=3, pady=50, padx=50)
@@ -99,12 +104,14 @@ class PlayerCreationGUI:
             self.entrys.append(name_entry)
             name_entry.grid(row=i + 1, column=0, padx=20)
             human_button = tk.Button(self.parent2, text="Гравець людина", command=lambda i=i: self.set_player(1, i),
-                                     font=self.button_font, bg=config.colour_button, fg=config.colour_text, relief=tk.RAISED, bd=3, padx=10,
+                                     font=self.button_font, bg=config.colour_button, fg=config.colour_text,
+                                     relief=tk.RAISED, bd=3, padx=10,
                                      pady=5, borderwidth=2, highlightthickness=0, activebackground="#010632")
             human_button.grid(row=i + 1, column=1, padx=10)
 
             bot_button = tk.Button(self.parent2, text="Гравець бот", command=lambda i=i: self.set_player(0, i),
-                                   font=self.button_font, bg=config.colour_button, fg=config.colour_text, relief=tk.RAISED, bd=3, padx=10,
+                                   font=self.button_font, bg=config.colour_button, fg=config.colour_text,
+                                   relief=tk.RAISED, bd=3, padx=10,
                                    pady=5, borderwidth=2, highlightthickness=0, activebackground="#010632")
             bot_button.grid(row=i + 1, column=2, padx=10)
 
@@ -125,13 +132,14 @@ class PlayerCreationGUI:
         self.parent1.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
 
     def add_players(self):
-        self.Players = []
+        general_map.players_amount = self.Amount_of_Players
+        general_map.star_image_tk_arr = [None for i in range(self.Amount_of_Players)]
+        general_map.players_positions = [0 for i in range(self.Amount_of_Players)]
         for i in range(self.Amount_of_Players):
             name = self.entrys[i].get()
             if not name:
                 return
-            self.Players.append((name, self.humans[i]))
-            print(name, self.humans[i])
+            general_map.players.append(create_player(name, self.humans[i]))
         main_game()
 
 
@@ -141,8 +149,10 @@ def back_to_menu():
 
 
 def switch_to_frame2():
+    global general_map
     frame1.grid_forget()
     frame2.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
+    general_map = create_map(frame8)
 
 
 def quit():
@@ -152,6 +162,10 @@ def quit():
 
 
 def start_menu():
+    global general_map
+    del general_map
+    for widget in frame8.winfo_children():
+        widget.destroy()
     frame1.grid_forget()
     frame2.grid_forget()
     frame3.grid_forget()
@@ -169,6 +183,10 @@ def start_menu():
     frame1.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
 
 
+def create_map(frame):
+    return MapGUI(frame, 25)
+
+
 root = tk.Tk()
 root.geometry("800x500")
 root.configure(bg=config.colour_background)
@@ -183,13 +201,12 @@ frame1 = tk.Frame(root)
 frame2 = tk.Frame(root)
 frame3 = tk.Frame(root)
 frame4 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="red")
-frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25 , bg="green")
+frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="green")
 frame6 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="blue")
 frame7 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="yellow")
 frame8 = tk.Frame(root)
 menu = StartMenuGUI(frame1, switch_to_frame2, quit)
 players_creation = PlayerCreationGUI(frame2, frame3)
-general_map = MapGUI(frame8, 25)
 start_menu()
 
 
@@ -216,7 +233,8 @@ def main_game():
     frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
     back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=("Arial", 12), bg="white", fg="black")
     back_button3.grid(row=0, column=0, sticky="nsew")
-    button4 = tk.Button(frame5, text="Кинути кубик", command=start_menu, font=("Arial", 12), bg="white", fg="black")
+    button4 = tk.Button(frame5, text="Кинути кубик", command=general_map.move_star, font=("Arial", 12), bg="white",
+                        fg="black")
     button4.grid(row=0, column=0, sticky="nsew")
 
 

@@ -1,27 +1,49 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from Configuration import Config
+import random
+from map import Map
+from players import *
 
 config = Config()
 
 
 class MapGUI:
-    def __init__(self, root, num_circles):
+    def __init__(self, root, num_circles, players_amount=2):
+        self.star_image_tk = None
+        self.circles_coords = None
         self.star_image = None
         self.circle_radius = None
         self.root = root
         self.num_circles = num_circles
-        self.star_image_tk = None
-        self.current_circle = 0
-
+        self.star_image_tk_arr = [None for i in range(players_amount)]
+        self.players_positions = [0 for i in range(players_amount)]
+        self.players_amount = players_amount
         self.canvas = tk.Canvas(self.root, bg=config.colour_background)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Configure>", self.redraw_table)
+        self.map = Map()
+        self.players = []
+        self.current_player = 0
 
-    def load_star_image(self):
-        self.star_image = Image.open("star.png")  # Замініть "star.png" на шлях до вашого зображення зірки
+    def clear(self, players_amount=2):
+        self.players_amount = players_amount
+        self.players_positions = [0 for i in range(players_amount)]
+        self.map = Map()
+        self.players = []
+        self.current_player = 0
+
+    def load_star_image(self, num):
+        self.star_image = config.players_icons[num]  # Замініть "star.png" на шлях до вашого зображення зірки
         self.star_image = self.star_image.resize((int(self.circle_radius), int(self.circle_radius)))
         self.star_image_tk = ImageTk.PhotoImage(self.star_image)
+        self.star_image_tk_arr[num] = self.star_image_tk
+
+    def show_players(self):
+        for i in range(self.players_amount):
+            self.load_star_image(i)
+            x, y = self.circles_coords[self.players_positions[i]]
+            self.canvas.create_image(x, y, anchor=tk.NW, image=self.star_image_tk_arr[i])
 
     def redraw_table(self, event=None):
         self.canvas.delete("all")
@@ -39,7 +61,19 @@ class MapGUI:
 
         x_start = 5 + (width - total_width) / 2
         y_start = 5 + (height - total_height) / 2
-
+        self.circles_coords = []
+        for i in range(num_columns):
+            self.circles_coords.append([x_start + i * (2 * self.circle_radius + gap),
+                                        y_start + 0 * (2 * self.circle_radius + gap)])
+        for i in range(1, num_rows):
+            self.circles_coords.append([x_start + (num_columns-1) * (2 * self.circle_radius + gap),
+                                        y_start + i * (2 * self.circle_radius + gap)])
+        for i in range(num_columns-2, -1, -1):
+            self.circles_coords.append([x_start + i * (2 * self.circle_radius + gap),
+                                        y_start + (num_rows-1) * (2 * self.circle_radius + gap)])
+        for i in range(num_columns-2, 0, -1):
+            self.circles_coords.append([x_start + 0 * (2 * self.circle_radius + gap),
+                                        y_start + i * (2 * self.circle_radius + gap)])
         for i in range(self.num_circles):
             column = i % num_columns
             row = i // num_columns
@@ -55,21 +89,17 @@ class MapGUI:
 
             else:
                 self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='black')
-
-        self.load_star_image()
-        self.canvas.create_image(x_start, y_start, anchor=tk.NW, image=self.star_image_tk)
+        for i, coord in enumerate(self.circles_coords):
+            x, y = coord
+            text_x = x + self.circle_radius / 2  # Adjust the text position as needed
+            text_y = y + self.circle_radius / 2  # Adjust the text position as needed
+            self.canvas.create_text(text_x, text_y, text=str(i), anchor=tk.CENTER, fill="white")
+        self.show_players()
 
     def move_star(self):
-        self.current_circle = (self.current_circle + 1) % self.num_circles
-        self.redraw_table()
-
-        column = self.current_circle % 5
-        row = self.current_circle // 5
-
-        x_start = 5 + (self.canvas.winfo_width() - self.canvas.winfo_reqwidth()) / 2
-        y_start = 5 + (self.canvas.winfo_height() - self.canvas.winfo_reqheight()) / 2
-
-        x = x_start + column * (2 * self.circle_radius + 0)
-        y = y_start + row * (2 * self.circle_radius + 0)
-
-        self.canvas.create_image(x, y, anchor=tk.NW, image=self.star_image_tk)
+        player = self.current_player
+        self.players_positions[player] = (self.players_positions[player] + random.randint(1, 6)) % config.fields_amount
+        print(player, self.players_positions[player])
+        self.show_players()
+        self.current_player += 1
+        self.current_player %= self.players_amount
