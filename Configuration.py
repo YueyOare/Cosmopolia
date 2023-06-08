@@ -7,3 +7,10 @@ class Config():
                  "планета", "планета", "планета", "телепорт","планета","планета","телепорт", "планета"]
    #масив, котрий визначає розташування різних типів клітинок на полі
 
+   colour_background = "#05152e"
+   colour_button = "#8b298e"
+   colour_frame3 = "#000000"
+   colour_frame4 = "#0e254e"
+   colour_text = "#dae7f0"
+   colour_frame3_text = "#92b7ff"
+
