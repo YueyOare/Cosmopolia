@@ -237,10 +237,40 @@ def main_game():
     frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
     back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
     back_button3.grid(row=0, column=0, sticky="nsew")
-    button4 = tk.Button(frame5, text="Кинути кубик", command=general_map.move_star, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
+    # button4 = tk.Button(frame5, text="Кинути кубик", command=general_map.move_star, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
+    # button4.grid(row=0, column=0, sticky="nsew")
+
+    def handle_button_click(): # при нажатии "бросить кубик" - событие, тут вроде получилось сделать связь со след игроками (ага)
+        result = general_map.move_star()
+        if result[0] == 0:  # телепорт, ничего особенного
+            print("0телепорт")
+        elif result[0] == 1:  # тюрьма первое попадание, запретить ходить
+            print("1тюрьма")
+        elif result[0] == 2:  # казино
+            print("2казино")
+            #     back_button3.grid_forget()
+            # button4.grid_forget()
+            # casino1 = Casino()
+            # player1 = client(HumanCreator(), "name") # не обращать внимания, тут должен быть текущий игрок и клетка
+            # button7 = CasinoButtons(frame5, casino1, player1)
+            # button7.grid(row=0, column=0, sticky="nsew")
+            # if button7 == 3: # типо, казино должно возвращать число, а отпускаем уже тут, но оно не торопится это делать
+            #     print("свобода!")
+            #     button7.grid_forget()
+        elif result[0] == 3:  # планета, тут будет купля/плата налогов
+            print("3планета")
+        if result[1] == 4:  # своё окошко для игрока в тюрьме, возможно, именно тюрьма будет немного по другому тут (тоесть остальное норм, это под вопросом)
+            print("след ход тюрьма") # скорее всего тюрьму упростим
+            #     back_button3.grid_forget()
+            # button4.grid_forget()
+            # prison = Prison() # возможно или это придется брать из мапы
+            # player1 = client(HumanCreator(), "name") # тут должен быть текущий игрок!!!!
+            # button8 = ButtonsPrison(frame5, prison, player1) # важно, что дальше должно вернуться всё к кнопке 4
+            # button8.grid(row=0, column=0, sticky="nsew")
+
+    button4 = tk.Button(frame5, text="Кинути кубик", command=handle_button_click, font=(config.font, config.font_size),
+                        bg=config.colour_button, fg=config.colour_text)
     button4.grid(row=0, column=0, sticky="nsew")
-
-
     # если игрок со статусом в тюрьме, для него открывается фрейм с тюрьмой, так же при нажатии кнопки "сидеть"
     # аналогично для казино
     # идея - сделать цикл для каждого игрока, по очереди будет индивидуально для каждого игрока создаваться его фрейм в зависимости от его статуса?(тут)
@@ -254,8 +284,8 @@ def main_game():
     #     button7.grid(row=0, column=0, sticky="nsew")
     #
     # def replace_button2():
-    #     back_button3.grid_forget()  # Remove the current button
-    #     button4.grid_forget()  # Remove the current button
+    #     back_button3.grid_forget()
+    #     button4.grid_forget()
     #     prison = Prison()
     #     player1 = client(HumanCreator(), "name")
     #     button8 = ButtonsPrison(frame5, prison, player1)

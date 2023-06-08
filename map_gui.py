@@ -31,6 +31,7 @@ class MapGUI:
         self.map = Map()
         self.players = []
         self.current_player = 0
+        self.prison = Prison()  # может это должно создаваться в мапе
 
     def clear(self, players_amount=2):
         self.players_amount = players_amount
@@ -120,19 +121,41 @@ class MapGUI:
         player = self.current_player
         self.players_positions[player] = (self.players_positions[player] + random.randint(1, 6)) % config.fields_amount
         position = self.players_positions[player]
-
         # это просто чтобы пока что работало, потом мб свяжется с картой
         if position in [2, 11, 14]:
             teleport_button = TeleportButton()
             index = teleport_button.action_teleport(self.players_positions[player])
             print("Гравця телепортувало в клітину:", index, "з клітини", self.players_positions[player])
             self.players_positions[player] = index
+            print(player, self.players_positions[player])
+            self.show_players()
+            self.current_player += 1
+            self.current_player %= self.players_amount
+            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко (если упростим тюрьму мб уберем)
+                return 0, 4
+            return 0, 0
         elif position == 4:
             print("Гравець потрапив у в'язницю")
+            print(player, self.players_positions[player])
+            self.show_players()
+            self.current_player += 1
+            self.current_player %= self.players_amount
+            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко
+                return 1, 4
+            return 1, 0
         elif position == 7:
             print("Гравець потрапив у казіно")
-
-        print(player, self.players_positions[player])
-        self.show_players()
-        self.current_player += 1
-        self.current_player %= self.players_amount
+            print(player, self.players_positions[player])
+            self.show_players()
+            self.current_player += 1
+            self.current_player %= self.players_amount
+            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко
+                return 2, 4
+            return 2, 0
+        else:
+            self.show_players()
+            self.current_player += 1
+            self.current_player %= self.players_amount
+            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко
+                return 3, 4
+            return 3, 0

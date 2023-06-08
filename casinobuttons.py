@@ -1,9 +1,10 @@
 import tkinter as tk
 from players import HumanCreator, client
 from random import randint
-from gamefields import Casino, Prison
-from prisonbuttons import ButtonsPrison
+from gamefields import Casino
 from Configuration import Config
+from map_gui import *
+
 
 # кнопки казино, важный момент, что они должны как-то взаимодействовать с остальным полем (например, отказ ведет к переходу к след. игроку)
 class CasinoButtons(tk.Frame):
@@ -13,6 +14,7 @@ class CasinoButtons(tk.Frame):
         self.casino = casino
         self.player = player
         self.choice = None
+        self.result = None
         conf = Config()
 
         self.button_cas_play = tk.Button(self, text="Грати в казіно", command=self.playcasinoaction,
@@ -44,38 +46,44 @@ class CasinoButtons(tk.Frame):
                              bg="#B0B2FD",
                              fg="#010632")
             label.grid(row=0, pady=50, padx=50)
-
+        self.result = 0
+        return self.result
     def playcasinoaction(self):
         conf = Config()
         button_cas_play_act10 = tk.Button(self, text="Поставити 10%",
                                           command=lambda: self.playcasinod(self.player.get_money() * 0.1),
                                           width=20, height=2,
-                                          bg=conf.colour_button, bd=2, relief=tk.SOLID, font=(conf.font,conf.font_size),)
+                                          bg=conf.colour_button, bd=2, relief=tk.SOLID,
+                                          font=(conf.font, conf.font_size), )
 
         button_cas_play_act20 = tk.Button(self, text="Поставити 20%",
                                           command=lambda: self.playcasinod(self.player.get_money() * 0.2),
                                           width=20, height=2,
-                                          bg=conf.colour_button, bd=2, relief=tk.SOLID, font=(conf.font,conf.font_size),)
+                                          bg=conf.colour_button, bd=2, relief=tk.SOLID,
+                                          font=(conf.font, conf.font_size), )
 
         button_cas_play_act50 = tk.Button(self, text="Поставити 50%",
                                           command=lambda: self.playcasinod(self.player.get_money() * 0.5),
                                           width=20, height=2,
-                                          bg=conf.colour_button, bd=2, relief=tk.SOLID, font=(conf.font,conf.font_size),)
+                                          bg=conf.colour_button, bd=2, relief=tk.SOLID,
+                                          font=(conf.font, conf.font_size), )
 
         button_cas_play_act10.grid(row=0, column=0, padx=10, sticky="ew")
         button_cas_play_act20.grid(row=1, column=0, padx=10, sticky="ew")
         button_cas_play_act50.grid(row=2, column=0, padx=10, sticky="ew")
-        return 0
+        self.result = 1
+        return self.result
 
     def playrouletteaction(self):
         self.casino.playroulette(self.player)
-        self.destroy()
-
+        self.result = 2
+        return self.result
     def escapeaction(self):
         print("гравець звільнився")
-        self.destroy()
-        # ход следующего игрока
+        self.result = 3
+        return self.result
 
+        # ход следующего игрока
 
 # player1 = client(HumanCreator(), "name")
 # casino1 = Casino()
