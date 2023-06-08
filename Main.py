@@ -1,181 +1,168 @@
-from map import *
-from players import *
-from PlanetChance import *
-from gamefields import *
+import tkinter as tk
+from tkinter import *
+import tkinter.font as tkfont
+from PIL import Image, ImageTk
+import random
+from Configuration import Config
+import numpy as np
 
 
-class Cosmopolia:
-    """Основний клас гри"""
+class MapGUI():
+    def __init__(self, root, players_amount=4):
+        self.players_icons = None
+        self.circles = None
+        self.texts = None
+        self.config = Config()
+        self.root = root
 
-    def __init__(self):
-        self.Players = []  # масив гравців
-        self.Amount_of_Players = 0  # загальна кількість гравців
-        #self.Amount_of_Humans = 0   кількість гравців - людей
-        #self.Amount_of_Bots = 0   кількість гравців - ботів
-        self.first_player = 0
-        self.Current_Player = 0
-        self.result = 1
-        self.Number_of_sides_of_cube = 12
-        self.map = Map()
-    def Randomaise_first_player(self):  # генеруємо першого гравця, що здійснює хід
-        self.first_player = self.Players[randint(0, self.Amount_of_Players - 1)]
-    def Create_Players(self):  # створюємо гравців
-        self.Amount_of_Players = int(input("введіть загальну кількість гравців: "))
-        for i in range(self.Amount_of_Players):  # дамо ім'я гравцям та занесемо їх в масив
-            isH = int(input("введіть 1, якщо гравець людина, та 0, якщо гравець бот: "))
-            while True:
-                if isH == 1 or isH == 0:
-                    break
-                isH = int(input("введіть 1, якщо гравець людина, та 0, якщо гравець бот: "))
-            Name = input("введіть ім'я гравця: ")
-            player = create_player(name=Name, is_human=isH)
-            self.Players.append(player)  # заносимо гравця до масиву
-    def Randomaise_dice(self):  # кидаємo кубик
-        return randint(1, self.Number_of_sides_of_cube)
+        self.root.configure(bg="#4100CC")
+        self.players_amount = players_amount
+        square_size = 150
+        self.squares_per_side = int(np.sqrt(self.config.fields_amount)) + 1
 
-    def Print_field_to_Player(self, Current_Player):  # виводимо поле на консоль
-        # print("field")
-        print("------ Гравець", Current_Player.get_name(),"------")
-        return
+        # Створюємо полотно
+        self.canvas = tk.Canvas(root, bg="#4100CC", highlightthickness=0)
+        background_color = "#4100CC"
+        circle_color = "#01004D"
+        # Прив'язуємо функцію до події зміни розміру canvas
+        self.canvas.bind("<Configure>", self.resize_image)
+        self.canvas.pack(fill="both", expand=True)
 
-    def Before_turn(self, Current_Player):  # дії до хода
-        self.Print_field_to_Player(Current_Player)  # виводимо поле на консоль
-        if not Current_Player.get_enabled():  # чи може гравець здійснювати хід? Якщо ні...
-            if self.map.array_Fields[4].get_move_main(Current_Player) < 3:  # якщо у в'язниці менше трьох ходів...
-                if Current_Player.get_is_human():
-                    action = int(input(
-                        "Enter variant of action in prison: 1 - хабарь, 2 - сідіти далі, 3 - збігти"))  # дія гравця у в'язниці
-                else:
-                    action = Current_Player.take_action(1, 3)
-                    actions = ["хабар", "сидіти далі", "збігти"]
-                    print("Гравець", Current_Player.get_name(),"обрав", actions[action-1])
-                self.result = self.map.array_Fields[4].player_choice(action, Current_Player)
-            else:
-                self.result = self.map.array_Fields[4].set_free(Current_Player)
-            if self.result == 1:
-                print("Гравець тепер на волі")
-            elif self.result == 0:
-                print("Гравець залишається у в'язниці")
+    def create_circle(self, x, y, size, color, number):
+        # Розраховуємо координати для круга
+        x1 = x * size
+        y1 = y * size
+        x2 = x1 + size
+        y2 = y1 + size
 
-    def Player_cube(self, Current_Player):  # дія гравця після кидка кубика
-        self.Current_Player = Current_Player
-        dice = int(self.Randomaise_dice())  # кидаємо кубик
-        self.Current_Player.move_to(dice)  # знаходимо нову позицію гравця
-        word = self.map.array_Fields[self.Current_Player.get_current_field()].event(
-            self.Current_Player)  # подія з гравцем на цій позиції
-        second_action = Console_fields(Current_Player)  # викликаємо дію гравця на полі
-        second_action.switch_first(word)
-class Console_fields:
-    """Клас взаємодії полей з користувачем"""
-    def __init__(self, player=0):
-        self.word = ""
-        self.player = player
-        self.bid = 0
-    def switch_first(self, ev): # вибір поля, на який потравив гравець
-        self.word = ev
-        if self.word == "Casino": # гравець потравив на поле казино
-            if self.player.get_is_human():
-                self.bid =int(input("Ви на клітинці Казино. Виберіть ставку: ")) # гравець вибирає ставку
-            else:
-                self.bid = self.player.take_action(1, self.player.get_money())
-            while True:
-                if self.bid > 0 and self.bid <= self.player.get_money(): # перевірка коректності введених даних користувачем
-                    game = StrategyCasino()
-                    res = game.startgame(self.player, self.bid) # граємо в казино
-                    self.switch_second(res)
-                    break
-                print("Ставка некорректна. Гравець ", self.player.get_name(), " має таку суму грошей: ", self.player.get_money())
-                self.bid =int(input("Виберіть ставку: "))
-        elif self.word == "Free": # гравця було звільнено зі в'язниці
-            print("Гравця ", self.player.get_name(), " було звільнено зі в'язниці")
-        elif self.word == "Teleport": # гравець на полі телепорт
-            print("Ви попали на клітинку Телепорт. Ваша нова позиція: ", self.player.get_current_field())
-        elif self.word == "Imprisoned": # гравець потрапив до в'язниці
-            print("На жаль, ви потрапили до в'язниці")
-        elif self.word == "StartFinish": # гравець потрапив на поле Старт/Фіниш
-            print("Ви потрапили на клітинку Старт/Фініш")
-        elif self.word == "Roulette": # гравець потравив на поле рулетка. Чи хоче він грати?
-            while True:
-                if self.player.get_is_human():
-                    answer = int(input("Ви потрапили на клітинку Рулетка. Чи хочете зіграти на свое життя? 1 - Так, 0 - Ні"))
-                else:
-                    answer = self.player.take_action(0, 1)
-                    if answer:
-                        print("Гравець", self.player.get_name(),"обрав зіграти в рулетку")
-                    else:
-                        print("Гравець", self.player.get_name(),"обрав не грати в рулетку")
-                if answer == 1: # якщо так - граємо
-                    game = StrategyRoulette()
-                    res = game.startgame(self.player)
-                    self.switch_second(res)
-                    break
-                elif answer == 0: # якщо ні, йдемо далі
-                    break
-        elif self.word == "player must pay": # гравець потрапил на чуже поле, тому повинен заплатити аренду
-            print("Ви потрапили на чуже поле, тому повинні заплатити аренду")
-            payment = System().Planet()  # якщо так, покупає
-            re = payment.pay(self.player)
-            if re == "Player does not have enough money to pay":
-                print("Недостатньо грошей для сплати")
-            elif re == "Player pay rent":
-                "Гравець вдало сплатив аренду"
-        elif self.word == "player can buy": # гравець потрапил на вільне поле, чи хочете його купити?
-            while True:
-                if self.player.get_is_human():
-                    answer = int(input("Ви потрапили на вільне поле, чи хочете його купити? 1 - так, 0 - ні: "))
-                else:
-                    answer = self.player.take_action(0, 1)
-                    if answer:
-                        print("Гравець", self.player.get_name(),"обрав купити поле")
-                    else:
-                        print("Гравець", self.player.get_name(),"обрав не купувати поле")
-                if answer == 1:
-                    payment = System().Planet() # якщо так, покупає
-                    re = payment.buy(self.player)
-                    if re == "Player does not have enough money to buy":
-                        print("Недостатньо грошей для покупки")
-                    elif re == "Player buy planet":
-                        "Покупка завершена"
-                    break
-                elif answer == 0: # якщо ні, йдемо далі
-                    break
-        elif self.word == "player is in his field":
-            print("Ви потрапили на своє поле")
-    def switch_second(self, res):  # результати казино та рулетки
-        self.word = res
-        if self.word == "WinCasino": # гравець виграв в казино
-            print("Перемога. Гравець ", self.player.get_name(), " виграв ", self.bid*3,", тепер має таку суму грошей: ", self.player.get_money())
-        elif self.word == "LoseCasino": # гравець програв в казино
-            print("Програш. Гравець ", self.player.get_name(), " програв ", self.bid, ", залишок: ", self.player.get_money())
-        elif self.word == "WinRoulette": # гравець виграв в рулетку
-            print("Перемога. Гравець ", self.player.get_name(), " тепер має таку суму грошей: ", self.player.get_money())
-        elif self.word == "LoseRoulette": # гравець програв в рулетку
-            print("Програш. Гравець ", self.player.get_name(), " помер :)")
-            self.player.set_died()
+        # Створюємо круг на полотні
+        circle = self.canvas.create_oval(x1, y1, x2, y2, fill=color, outline="black")
 
-"""class Builder:
-    def __init__(self):
-        self.player = Player()
-    def build(self):
-        return self.player
-    def name(self, N):
-        self.player.name = N
-        return self
-    def id(self, i):
-        self.player.id = i
-        return self
-    def is_human(self, isH):
-        self.player.is_human = isH
-        return self"""
+        # Додаємо номер у центр круга
+        text = self.canvas.create_text((x1 + x2) // 2, (y1 + y2) // 2, text=str(number), fill="white",
+                                       font=("Arial", 16))
 
-# Game = Cosmopolia()
-# Game.Create_Players()  # створюємо гравців
-# # while True:
-# for i in range(5):
-#     for Current_Player in Game.Players:  # проходимо по циклу гравців
-#         Game.Before_turn(Current_Player)  # дії до хода гравця
-#         if Game.result == 0:  # якщо ігрок у в'язниці
-#             continue
-#         Game.Player_cube(Current_Player)  # дії під час хода гравця
-#     Current_Player = Game.Players[0]  # після проходження масива повертаємося до першого гравця в масиві
+        return circle, text
 
+    def create_circles(self, square_size=150, circle_color="#01004D"):
+        # Додаємо кружки
+        locationB = [1, 2, 3, 4]
+        locationC = [3, 2, 1, 0]
+        locationD = [3, 2, 1]
+        circles = []
+        texts = []
+        number = 1
+        for x in range(self.squares_per_side):
+            # Створюємо кружок та отримуємо його ідентифікатор
+            circle, text = self.create_circle(x, 0, square_size, circle_color, number)
+
+            # Додаємо ідентифікатор кружка до списку
+            circles.append(circle)
+            texts.append(text)
+
+            number += 1
+
+        number = 6
+        for y in locationB:
+            circle, text = self.create_circle(4, y, square_size, circle_color, number)
+            circles.append(circle)
+            texts.append(text)
+            number += 1
+
+        number = 11
+        for z in locationC:
+            circle, text = self.create_circle(z, 4, square_size, circle_color, number)
+            circles.append(circle)
+            texts.append(text)
+            number += 1
+
+        number = 14
+        for q in locationD:
+            circle, text = self.create_circle(0, q, square_size, circle_color, number)
+            circles.append(circle)
+            texts.append(text)
+            number += 1
+        return circles, texts
+
+    def resize_image(self, event):
+        canvas_width = event.width
+        canvas_height = event.height
+
+        # Завантажуємо зображення
+        image = Image.open("Space_photo.gif")
+        image = image.resize((canvas_width, canvas_height))
+        photo = ImageTk.PhotoImage(image)
+
+        # Оновлюємо зображення на canvas
+        self.canvas.delete("all")
+        self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+        self.canvas.image = photo  # Зберігаємо посилання на зображення, щоб уникнути видалення з пам'яті
+        self.circles, self.texts = self.create_circles(min(canvas_height, canvas_width) / 5 - 1, "#01004D")
+        self.players_icons = []
+        for i in range(self.players_amount):
+            player_icon = PlayerIcons(self.canvas, "star.png", min(canvas_height, canvas_width) / 5 - 1)
+            self.players_icons.append(player_icon)
+
+    def roll_dice(self):
+        global number, player_num
+        # Генеруємо випадкове число від 1 до 6
+        roll = random.randint(1, 6)
+
+        # Обчислюємо новий номер за алгоритмом: (номер + згенероване число) % 16
+        number = (number + roll) % 16
+        if number == 0:
+            number = 16
+        # Оновлюємо текст на кнопці "Випало"
+        # dice_number.config(text=f"Випало: {roll}")
+
+        # Переміщуємо зірку на нове положення
+        self.players_icons[player_num].move_player()
+
+
+class PlayerIcons():
+    def __init__(self, canvas, img, size):
+        self.canvas = canvas
+        # Додаємо зображення зірки
+        star_image = Image.open(img)
+        star_image = star_image.resize((int(size / 2), int(size / 2)))
+        star_photo = ImageTk.PhotoImage(star_image)
+
+        # Отримуємо початкові координати для зірки
+        x, y = get_coordinates(1, size)
+
+        # Створюємо зірку на полотні
+        self.star = canvas.create_image(0, 0, anchor=tk.NW, image=star_photo)
+
+    def move_player(self):
+        global number
+        # Отримуємо координати для нового положення зірки
+        x, y = get_coordinates(number)
+
+        # Зміщуємо зірку на нові координати
+        self.canvas.coords(self.star, x, y)
+
+        # Підносимо зірку над іншими об'єктами на полотні
+        self.canvas.lift(self.star)
+
+
+def get_coordinates(number, square_size):
+    if number <= 5:
+        return (number - 1) * square_size, 0
+    elif 5 < number <= 9:
+        return 4 * square_size, (number - 5) * square_size
+    elif number == 10:
+        return 3 * square_size, 4 * square_size
+    elif number == 11:
+        return 2 * square_size, 4 * square_size
+    elif number == 12:
+        return 1 * square_size, 4 * square_size
+    elif number == 13:
+        return 0, 4 * square_size
+    elif number == 14:
+        return 0, 3 * square_size
+    elif number == 15:
+        return 0, 2 * square_size
+    elif number == 16:
+        return 0, 1 * square_size
+    else:
+        return 0, (16 - number) * square_size
