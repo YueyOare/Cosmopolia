@@ -1,6 +1,7 @@
 import tkinter.font as tkfont
 import tkinter as tk
-from Main import MapGUI
+# from Main import MapGUI
+from new_map import CircleTable
 
 
 class StartMenuGUI:
@@ -63,7 +64,7 @@ class PlayerCreationGUI:
                               fg="white", relief=tk.RAISED)
         self.button5.grid(row=1, column=2, padx=20)
 
-        self.back_button = tk.Button(self.parent1, text="Назад", command=self.back_to_menu, font=self.button_font,
+        self.back_button = tk.Button(self.parent1, text="Назад", command=back_to_menu, font=self.button_font,
                                   bg="#010632", fg="white", relief=tk.RAISED)
         self.back_button.grid(row=2, column=0, pady=50, columnspan=3)
 
@@ -148,17 +149,28 @@ def start_menu():
 
 root = tk.Tk()
 root.geometry("600x400")
+
+window_width = root.winfo_screenwidth()
+window_height = root.winfo_screenheight()
+
+left_width = window_width // 2
+left_height = window_height
+
+
+frame5 = tk.Frame(root)
+frame5.grid(row=0, column=1, rowspan=4, sticky="nsew")
 frame1 = tk.Frame(root)
 frame2 = tk.Frame(root)
 frame3 = tk.Frame(root)
-frame4 = tk.Frame(root, bg="black")
-frame5 = tk.Frame(root, bg="black")
-frame6 = tk.Frame(root, bg="black")
-frame7 = tk.Frame(root, bg="black")
-frame8 = tk.Frame(root, bg="black")
+frame4 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="red")
+frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="green")
+frame6 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="blue")
+frame7 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="yellow")
+frame8 = tk.Frame(root)
 menu = StartMenuGUI(frame1, switch_to_frame2, quit)
 players_creation = PlayerCreationGUI(frame2, frame3)
-general_map = MapGUI(frame8)
+# general_map = MapGUI(frame8)
+general_map = CircleTable(frame8, 25)
 start_menu()
 
 
@@ -166,19 +178,19 @@ def main_game():
     frame1.grid_forget()
     frame2.grid_forget()
     frame3.grid_forget()
-    root.columnconfigure(index=0, weight=1)
-    root.columnconfigure(index=1, weight=1)
-    root.rowconfigure(index=0, weight=1)
-    root.rowconfigure(index=1, weight=1)
-    root.rowconfigure(index=2, weight=1)
-    root.rowconfigure(index=3, weight=1)
-    frame4.grid(row=0, column=0, padx=5, pady=1, sticky=tk.NSEW)
-    frame5.grid(row=1, column=0, padx=5, pady=1, sticky=tk.NSEW)
-    frame6.grid(row=2, column=0, padx=5, pady=1, sticky=tk.NSEW)
-    frame7.grid(row=3, column=0, padx=5, pady=1, sticky=tk.NSEW)
-    frame8.grid(row=0, column=1, rowspan=4, padx=5, pady=1, sticky=tk.NSEW)
+    root.grid_rowconfigure(0, weight=1)
+    root.grid_rowconfigure(1, weight=1)
+    root.grid_rowconfigure(2, weight=1)
+    root.grid_rowconfigure(3, weight=1)
+    root.grid_columnconfigure(0, weight=1)
+    root.grid_columnconfigure(1, weight=1)
+    frame4.grid(row=0, column=0, sticky="nsew")
+    frame5.grid(row=1, column=0, sticky="nsew")
+    frame6.grid(row=2, column=0, sticky="nsew")
+    frame7.grid(row=3, column=0, sticky="nsew")
+    frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
 
 
-back_button = tk.Button(frame4, text="Повернутися", command=start_menu, font=("Arial", 12), bg="white", fg="black")
-back_button.pack()
+# back_button = tk.Button(frame4, text="Повернутися", command=start_menu, font=("Arial", 12), bg="white", fg="black")
+# back_button.pack()
 root.mainloop()
