@@ -1,6 +1,6 @@
 import tkinter.font as tkfont
 import tkinter as tk
-from main import MapGUI
+from Main import MapGUI
 
 
 class StartMenuGUI:
