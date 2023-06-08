@@ -200,10 +200,10 @@ left_height = window_height
 frame1 = tk.Frame(root, bg=config.colour_background)
 frame2 = tk.Frame(root, bg=config.colour_background)
 frame3 = tk.Frame(root, bg=config.colour_background)
-frame4 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="red")
-frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="green")
-frame6 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="blue")
-frame7 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="yellow")
+frame4 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg=config.colour_background)
+frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg=config.colour_background)
+frame6 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg=config.colour_frame3)
+frame7 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg=config.colour_background)
 frame8 = tk.Frame(root, bg=config.colour_background)
 menu = StartMenuGUI(frame1, switch_to_frame2, quit)
 players_creation = PlayerCreationGUI(frame2, frame3)
@@ -231,10 +231,9 @@ def main_game():
     frame6.grid(row=2, column=0, sticky="nsew")
     frame7.grid(row=3, column=0, sticky="nsew")
     frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
-    back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=("Arial", 12), bg="white", fg="black")
+    back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
     back_button3.grid(row=0, column=0, sticky="nsew")
-    button4 = tk.Button(frame5, text="Кинути кубик", command=general_map.move_star, font=("Arial", 12), bg="white",
-                        fg="black")
+    button4 = tk.Button(frame5, text="Кинути кубик", command=general_map.move_star, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
     button4.grid(row=0, column=0, sticky="nsew")
 
 
