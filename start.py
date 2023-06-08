@@ -197,14 +197,14 @@ window_height = root.winfo_screenheight()
 left_width = window_width // 2
 left_height = window_height
 
-frame1 = tk.Frame(root)
-frame2 = tk.Frame(root)
-frame3 = tk.Frame(root)
+frame1 = tk.Frame(root, bg=config.colour_background)
+frame2 = tk.Frame(root, bg=config.colour_background)
+frame3 = tk.Frame(root, bg=config.colour_background)
 frame4 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="red")
 frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="green")
 frame6 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="blue")
 frame7 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="yellow")
-frame8 = tk.Frame(root)
+frame8 = tk.Frame(root, bg=config.colour_background)
 menu = StartMenuGUI(frame1, switch_to_frame2, quit)
 players_creation = PlayerCreationGUI(frame2, frame3)
 start_menu()

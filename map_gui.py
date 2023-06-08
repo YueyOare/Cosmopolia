@@ -10,13 +10,16 @@ config = Config()
 
 class MapGUI:
     def __init__(self, root, num_circles, players_amount=2):
+        self.cell_image_tk = None
         self.star_image_tk = None
         self.circles_coords = None
         self.star_image = None
+        self.cell_image = None
         self.circle_radius = None
         self.root = root
         self.num_circles = num_circles
         self.star_image_tk_arr = [None for i in range(players_amount)]
+        self.cell_image_tk_arr = [None for i in range(config.fields_amount)]
         self.players_positions = [0 for i in range(players_amount)]
         self.players_amount = players_amount
         self.canvas = tk.Canvas(self.root, bg=config.colour_background)
@@ -34,16 +37,28 @@ class MapGUI:
         self.current_player = 0
 
     def load_star_image(self, num):
-        self.star_image = config.players_icons[num]  # Замініть "star.png" на шлях до вашого зображення зірки
+        self.star_image = config.players_icons[num]
         self.star_image = self.star_image.resize((int(self.circle_radius), int(self.circle_radius)))
         self.star_image_tk = ImageTk.PhotoImage(self.star_image)
         self.star_image_tk_arr[num] = self.star_image_tk
+
+    def load_cell_image(self, num):
+        self.cell_image = config.planets_icons[num]
+        self.cell_image = self.cell_image.resize((int(self.circle_radius * 2), int(self.circle_radius * 2)))
+        self.cell_image_tk = ImageTk.PhotoImage(self.cell_image)
+        self.cell_image_tk_arr[num] = self.cell_image_tk
 
     def show_players(self):
         for i in range(self.players_amount):
             self.load_star_image(i)
             x, y = self.circles_coords[self.players_positions[i]]
             self.canvas.create_image(x, y, anchor=tk.NW, image=self.star_image_tk_arr[i])
+
+    def show_cells(self):
+        for i in range(config.fields_amount):
+            self.load_cell_image(i)
+            x, y = self.circles_coords[i]
+            self.canvas.create_image(x, y, anchor=tk.NW, image=self.cell_image_tk_arr[i])
 
     def redraw_table(self, event=None):
         self.canvas.delete("all")
@@ -74,6 +89,7 @@ class MapGUI:
         for i in range(num_columns-2, 0, -1):
             self.circles_coords.append([x_start + 0 * (2 * self.circle_radius + gap),
                                         y_start + i * (2 * self.circle_radius + gap)])
+        self.show_cells()
         for i in range(self.num_circles):
             column = i % num_columns
             row = i // num_columns
@@ -88,7 +104,7 @@ class MapGUI:
                 self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
 
             else:
-                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='black')
+                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='yellow', width=2)
         for i, coord in enumerate(self.circles_coords):
             x, y = coord
             text_x = x + self.circle_radius / 2  # Adjust the text position as needed
