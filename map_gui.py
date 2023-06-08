@@ -49,7 +49,7 @@ class MapGUI:
 
             if row != 0 and row != num_rows - 1 and column != 0 and column != num_columns - 1:
                 image = Image.new("RGBA", (int(2 * self.circle_radius), int(2 * self.circle_radius)),
-                                  config.transparent_color)
+                                  "#00000000")
                 image_tk = ImageTk.PhotoImage(image)
                 self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
 

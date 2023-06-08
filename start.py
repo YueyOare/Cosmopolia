@@ -115,14 +115,14 @@ class PlayerCreationGUI:
         start_button = tk.Button(self.parent2, text="Розпочати гру", command=self.add_players, font=self.button_font,
                                  bg=config.colour_button, fg=config.colour_text, relief=tk.RAISED)
         start_button.grid(row=self.Amount_of_Players + 2, column=0, pady=10, columnspan=3)
-        self.parent2.grid(row=0, column=0, sticky="nsew")
+        self.parent2.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
 
     def set_player(self, is_human, n):
         self.humans[n] = is_human
 
     def back_to_menu(self):
         self.parent2.grid_forget()
-        self.parent1.grid(row=0, column=0, sticky="nsew")
+        self.parent1.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
 
     def add_players(self):
         self.Players = []
@@ -137,12 +137,12 @@ class PlayerCreationGUI:
 
 def back_to_menu():
     frame2.grid_forget()
-    frame1.grid(row=0, column=0, sticky="nsew")
+    frame1.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
 
 
 def switch_to_frame2():
     frame1.grid_forget()
-    frame2.grid(row=0, column=0, sticky="nsew")
+    frame2.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
 
 
 def quit():
@@ -152,19 +152,27 @@ def quit():
 
 
 def start_menu():
+    frame1.grid_forget()
+    frame2.grid_forget()
+    frame3.grid_forget()
     frame4.grid_forget()
     frame5.grid_forget()
     frame6.grid_forget()
     frame7.grid_forget()
     frame8.grid_forget()
     root.grid_rowconfigure(0, weight=1)
+    root.grid_rowconfigure(1, weight=1)
+    root.grid_rowconfigure(2, weight=1)
+    root.grid_rowconfigure(3, weight=1)
     root.grid_columnconfigure(0, weight=1)
-    frame1.grid(row=0, column=0, sticky="nsew")
+    root.grid_columnconfigure(1, weight=1)
+    frame1.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew")
 
 
 root = tk.Tk()
 root.geometry("800x500")
 root.configure(bg=config.colour_background)
+# root.configure(bg="white")
 window_width = root.winfo_screenwidth()
 window_height = root.winfo_screenheight()
 
@@ -174,14 +182,13 @@ left_height = window_height
 frame1 = tk.Frame(root)
 frame2 = tk.Frame(root)
 frame3 = tk.Frame(root)
-frame4 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="red")
-frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="green")
-frame6 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="blue")
-frame7 = tk.Frame(root, width=left_width * 0.25, height=left_height, bg="yellow")
+frame4 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="red")
+frame5 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25 , bg="green")
+frame6 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="blue")
+frame7 = tk.Frame(root, width=left_width * 0.25, height=left_height * 0.25, bg="yellow")
 frame8 = tk.Frame(root)
 menu = StartMenuGUI(frame1, switch_to_frame2, quit)
 players_creation = PlayerCreationGUI(frame2, frame3)
-# general_map = MapGUI(frame8)
 general_map = MapGUI(frame8, 25)
 start_menu()
 
@@ -207,10 +214,10 @@ def main_game():
     frame6.grid(row=2, column=0, sticky="nsew")
     frame7.grid(row=3, column=0, sticky="nsew")
     frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
-    # back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=("Arial", 12), bg="white", fg="black")
-    # back_button3.grid(row=0, column=0, sticky="nsew")
-    # button4 = tk.Button(frame5, text="Кинути кубик", command=start_menu, font=("Arial", 12), bg="white", fg="black")
-    # button4.grid(row=0, column=0, sticky="nsew")
+    back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=("Arial", 12), bg="white", fg="black")
+    back_button3.grid(row=0, column=0, sticky="nsew")
+    button4 = tk.Button(frame5, text="Кинути кубик", command=start_menu, font=("Arial", 12), bg="white", fg="black")
+    button4.grid(row=0, column=0, sticky="nsew")
 
 
 root.mainloop()
