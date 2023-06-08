@@ -1,49 +1,151 @@
 import tkinter as tk
+from tkinter import *
+import tkinter.font as tkfont
 from PIL import Image, ImageTk
 import random
+from Configuration import Config
+import numpy as np
 
-def create_circle(canvas, x, y, size, color, number):
-    # Розраховуємо координати для круга
-    x1 = x * size
-    y1 = y * size
-    x2 = x1 + size
-    y2 = y1 + size
 
-    # Створюємо круг на полотні
-    circle = canvas.create_oval(x1, y1, x2, y2, fill=color, outline="black")
+class MapGUI():
+    def __init__(self, root, players_amount=4):
+        self.players_icons = None
+        self.circles = None
+        self.texts = None
+        self.config = Config()
+        self.root = root
 
-    # Додаємо номер у центр круга
-    canvas.create_text((x1 + x2) // 2, (y1 + y2) // 2, text=str(number), fill="white", font=("Arial", 16))
+        self.root.configure(bg="#4100CC")
+        self.players_amount = players_amount
+        square_size = 150
+        self.squares_per_side = int(np.sqrt(self.config.fields_amount)) + 1
 
-    return circle
+        # Створюємо полотно
+        self.canvas = tk.Canvas(root, bg="#4100CC", highlightthickness=0)
+        background_color = "#4100CC"
+        circle_color = "#01004D"
+        # Прив'язуємо функцію до події зміни розміру canvas
+        self.canvas.bind("<Configure>", self.resize_image)
+        self.canvas.pack(fill="both", expand=True)
 
-def roll_dice():
-    global number
-    # Генеруємо випадкове число від 1 до 6
-    roll = random.randint(1, 6)
+    def create_circle(self, x, y, size, color, number):
+        # Розраховуємо координати для круга
+        x1 = x * size
+        y1 = y * size
+        x2 = x1 + size
+        y2 = y1 + size
 
-    # Обчислюємо новий номер за алгоритмом: (номер + згенероване число) % 16
-    number = (number + roll) % 16
-    if number == 0:
-        number = 16
-    # Оновлюємо текст на кнопці "Випало"
-    dice_number.config(text=f"Випало: {roll}")
+        # Створюємо круг на полотні
+        circle = self.canvas.create_oval(x1, y1, x2, y2, fill=color, outline="black")
 
-    # Переміщуємо зірку на нове положення
-    move_star()
+        # Додаємо номер у центр круга
+        text = self.canvas.create_text((x1 + x2) // 2, (y1 + y2) // 2, text=str(number), fill="white",
+                                       font=("Arial", 16))
 
-def move_star():
-    global number
-    # Отримуємо координати для нового положення зірки
-    x, y = get_coordinates(number)
+        return circle, text
 
-    # Зміщуємо зірку на нові координати
-    canvas.coords(star, x, y)
+    def create_circles(self, square_size=150, circle_color="#01004D"):
+        # Додаємо кружки
+        locationB = [1, 2, 3, 4]
+        locationC = [3, 2, 1, 0]
+        locationD = [3, 2, 1]
+        circles = []
+        texts = []
+        number = 1
+        for x in range(self.squares_per_side):
+            # Створюємо кружок та отримуємо його ідентифікатор
+            circle, text = self.create_circle(x, 0, square_size, circle_color, number)
 
-    # Підносимо зірку над іншими об'єктами на полотні
-    canvas.lift(star)
+            # Додаємо ідентифікатор кружка до списку
+            circles.append(circle)
+            texts.append(text)
 
-def get_coordinates(number):
+            number += 1
+
+        number = 6
+        for y in locationB:
+            circle, text = self.create_circle(4, y, square_size, circle_color, number)
+            circles.append(circle)
+            texts.append(text)
+            number += 1
+
+        number = 11
+        for z in locationC:
+            circle, text = self.create_circle(z, 4, square_size, circle_color, number)
+            circles.append(circle)
+            texts.append(text)
+            number += 1
+
+        number = 14
+        for q in locationD:
+            circle, text = self.create_circle(0, q, square_size, circle_color, number)
+            circles.append(circle)
+            texts.append(text)
+            number += 1
+        return circles, texts
+
+    def resize_image(self, event):
+        canvas_width = event.width
+        canvas_height = event.height
+
+        # Завантажуємо зображення
+        image = Image.open("Space_photo.gif")
+        image = image.resize((canvas_width, canvas_height))
+        photo = ImageTk.PhotoImage(image)
+
+        # Оновлюємо зображення на canvas
+        self.canvas.delete("all")
+        self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+        self.canvas.image = photo  # Зберігаємо посилання на зображення, щоб уникнути видалення з пам'яті
+        self.circles, self.texts = self.create_circles(min(canvas_height, canvas_width) / 5 - 1, "#01004D")
+        self.players_icons = []
+        for i in range(self.players_amount):
+            player_icon = PlayerIcons(self.canvas, "star.png", min(canvas_height, canvas_width) / 5 - 1)
+            self.players_icons.append(player_icon)
+
+    def roll_dice(self):
+        global number, player_num
+        # Генеруємо випадкове число від 1 до 6
+        roll = random.randint(1, 6)
+
+        # Обчислюємо новий номер за алгоритмом: (номер + згенероване число) % 16
+        number = (number + roll) % 16
+        if number == 0:
+            number = 16
+        # Оновлюємо текст на кнопці "Випало"
+        # dice_number.config(text=f"Випало: {roll}")
+
+        # Переміщуємо зірку на нове положення
+        self.players_icons[player_num].move_player()
+
+
+class PlayerIcons():
+    def __init__(self, canvas, img, size):
+        self.canvas = canvas
+        # Додаємо зображення зірки
+        star_image = Image.open(img)
+        star_image = star_image.resize((int(size / 2), int(size / 2)))
+        star_photo = ImageTk.PhotoImage(star_image)
+
+        # Отримуємо початкові координати для зірки
+        x, y = get_coordinates(1, size)
+
+        # Створюємо зірку на полотні
+        self.star = canvas.create_image(0, 0, anchor=tk.NW, image=star_photo)
+
+    def move_player(self):
+        global number
+        # Отримуємо координати для нового положення зірки
+        x, y = get_coordinates(number)
+
+        # Зміщуємо зірку на нові координати
+        self.canvas.coords(self.star, x, y)
+
+        # Підносимо зірку над іншими об'єктами на полотні
+        self.canvas.lift(self.star)
+
+
+def get_coordinates(number, square_size):
     if number <= 5:
         return (number - 1) * square_size, 0
     elif 5 < number <= 9:
@@ -64,91 +166,3 @@ def get_coordinates(number):
         return 0, 1 * square_size
     else:
         return 0, (16 - number) * square_size
-
-root = tk.Tk()
-root.title("Монополія")
-root.geometry("800x600")
-root.configure(bg="#4100CC")
-
-square_size = 150
-squares_per_side = 5
-
-canvas_width = square_size * squares_per_side
-canvas_height = square_size * squares_per_side
-
-# Створюємо фрейм для розміщення полотна
-frame = tk.Frame(root, bg="#4100CC")
-frame.pack(side=tk.LEFT)
-
-# Створюємо полотно
-canvas = tk.Canvas(frame, width=canvas_width, height=canvas_height, bg="#4100CC", highlightthickness=0)
-canvas.pack()
-
-background_color = "#4100CC"
-circle_color = "#01004D"
-
-# Додаємо зображення заднього фону
-image = Image.open("Space_photo.gif")
-image = image.resize((int(image.width * 1.3), int(image.height * 1.3)))
-photo = ImageTk.PhotoImage(image)
-image_width = photo.width()
-image_height = photo.height()
-image_x = (canvas_width - image_width) // 2
-image_y = (canvas_height - image_height) // 2
-canvas.create_image(image_x, image_y, anchor=tk.NW, image=photo)
-
-number = 1
-locationB = [1, 2, 3, 4]
-locationC = [3, 2, 1, 0]
-locationD = [3, 2, 1]
-
-circles = []  # Список для збереження ідентифікаторів кружків
-
-# Додаємо кружки
-for x in range(squares_per_side):
-    # Створюємо кружок та отримуємо його ідентифікатор
-    circle = create_circle(canvas, x, 0, square_size, circle_color, number)
-
-    # Додаємо ідентифікатор кружка до списку
-    circles.append(circle)
-
-    number += 1
-
-number = 6
-for y in locationB:
-    circle = create_circle(canvas, 4, y, square_size, circle_color, number)
-    circles.append(circle)
-    number += 1
-
-number = 11
-for z in locationC:
-    circle = create_circle(canvas, z, 4, square_size, circle_color, number)
-    circles.append(circle)
-    number += 1
-
-number = 14
-for q in locationD:
-    circle = create_circle(canvas, 0, q, square_size, circle_color, number)
-    circles.append(circle)
-    number += 1
-
-# Додаємо зображення зірки
-star_image = Image.open("star.png")
-star_image = star_image.resize((int(square_size / 2), int(square_size / 2)))
-star_photo = ImageTk.PhotoImage(star_image)
-
-# Отримуємо початкові координати для зірки
-x, y = get_coordinates(1)
-
-# Створюємо зірку на полотні
-star = canvas.create_image(x, y, anchor=tk.NW, image=star_photo)
-
-# Додаємо кнопку "Кинути кубик"
-button_frame = tk.Frame(root, bg="#4100CC")
-button_frame.pack(side=tk.LEFT, padx=20)
-dice_button = tk.Button(button_frame, text="Кинути кубик", command=roll_dice)
-dice_button.pack(pady=10)
-dice_number = tk.Label(button_frame, text="Випало: ", font=("Arial", 16), bg="#B0B2FD")
-dice_number.pack()
-frame.place(x=700, y=20)
-root.mainloop()
