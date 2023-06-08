@@ -6,8 +6,10 @@ class Config():
    """клас, який містить дані для створення поля"""
 
    fields_amount = 16 #кількість клітинок на полі
-   array_Fields=["старт", "планета", "телепорт", "планета", "тюрма", "планета", "планета","шанс",
-                 "планета", "планета", "планета", "телепорт","планета","планета","телепорт", "планета"]
+   array_Fields=["старт", "планета", "телепорт", "планета",
+                 "тюрма", "планета", "планета","шанс",
+                 "планета", "планета", "планета", "телепорт",
+                 "планета","планета","телепорт", "планета"]
    #масив, котрий визначає розташування різних типів клітинок на полі
 
    colour_background = "#05152e"
@@ -32,6 +34,10 @@ class Config():
    image_planet_blue = Image.open("Planet_Blue.PNG")
    image_planet_green = Image.open("Planet_Green.PNG")
    image_planet_yellow = Image.open("Planet_Yellow.PNG")
+   planets_icons = [image_start_finish, image_planet_red, image_teleport, image_planet_red,
+                   image_prison, image_planet_blue, image_planet_blue, image_chance,
+                   image_planet_blue, image_planet_green, image_planet_green, image_teleport,
+                    image_planet_yellow, image_planet_yellow, image_teleport, image_planet_yellow]
 
    image_ufo_red = Image.open("UFO_Red.PNG")
    image_ufo_blue = Image.open("UFO_Blue.PNG")

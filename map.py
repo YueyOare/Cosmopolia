@@ -28,14 +28,14 @@ class Map(metaclass=Singleton):
         system4 = System("Зелена", 3)
         planet11 = system1.Planet("Планета11", 100, 25,  cost_of_branches=150, rent_increase=50)
         planet12 = system1.Planet("Планета12", 110, 30,  cost_of_branches=170, rent_increase=70)
-        planet21 = system1.Planet("Планета21", 200, 55,  cost_of_branches=220, rent_increase=100)
-        planet22 = system1.Planet("Планета22", 220, 60,  cost_of_branches=250, rent_increase=110)
-        planet23 = system1.Planet("Планета23", 240, 75,  cost_of_branches=270, rent_increase=130)
-        planet31 = system1.Planet("Планета31", 310, 100,  cost_of_branches=350, rent_increase=150)
-        planet32 = system1.Planet("Планета32", 320, 105,  cost_of_branches=370, rent_increase=170)
-        planet41 = system1.Planet("Планета41", 430, 150,  cost_of_branches=460, rent_increase=200)
-        planet42 = system1.Planet("Планета42", 450, 155,  cost_of_branches=490, rent_increase=220)
-        planet43 = system1.Planet("Планета43", 455, 165,  cost_of_branches=500, rent_increase=250)
+        planet21 = system2.Planet("Планета21", 200, 55,  cost_of_branches=220, rent_increase=100)
+        planet22 = system2.Planet("Планета22", 220, 60,  cost_of_branches=250, rent_increase=110)
+        planet23 = system2.Planet("Планета23", 240, 75,  cost_of_branches=270, rent_increase=130)
+        planet31 = system3.Planet("Планета31", 310, 100,  cost_of_branches=350, rent_increase=150)
+        planet32 = system3.Planet("Планета32", 320, 105,  cost_of_branches=370, rent_increase=170)
+        planet41 = system4.Planet("Планета41", 430, 150,  cost_of_branches=460, rent_increase=200)
+        planet42 = system4.Planet("Планета42", 450, 155,  cost_of_branches=490, rent_increase=220)
+        planet43 = system4.Planet("Планета43", 455, 165,  cost_of_branches=500, rent_increase=250)
         array_planets = [planet11, planet12, planet21, planet22, planet23, planet31, planet32, planet41, planet42, planet43]
         for i in range(config.fields_amount):
             if config.array_Fields[i] == "старт":
