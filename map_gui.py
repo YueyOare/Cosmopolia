@@ -1,8 +1,11 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from Configuration import Config
+
+config = Config()
 
 
-class CircleTable:
+class MapGUI:
     def __init__(self, root, num_circles):
         self.star_image = None
         self.circle_radius = None
@@ -11,7 +14,7 @@ class CircleTable:
         self.star_image_tk = None
         self.current_circle = 0
 
-        self.canvas = tk.Canvas(self.root, bg="pink")
+        self.canvas = tk.Canvas(self.root, bg=config.colour_background)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Configure>", self.redraw_table)
 
@@ -45,8 +48,8 @@ class CircleTable:
             y = y_start + row * (2 * self.circle_radius + gap)
 
             if row != 0 and row != num_rows - 1 and column != 0 and column != num_columns - 1:
-                transparent_color = "#00000000"
-                image = Image.new("RGBA", (int(2 * self.circle_radius), int(2 * self.circle_radius)), transparent_color)
+                image = Image.new("RGBA", (int(2 * self.circle_radius), int(2 * self.circle_radius)),
+                                  config.transparent_color)
                 image_tk = ImageTk.PhotoImage(image)
                 self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
 
@@ -70,4 +73,3 @@ class CircleTable:
         y = y_start + row * (2 * self.circle_radius + 0)
 
         self.canvas.create_image(x, y, anchor=tk.NW, image=self.star_image_tk)
-
