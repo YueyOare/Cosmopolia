@@ -5,6 +5,8 @@ import random
 from map import Map
 from players import *
 from teleportbuttons import TeleportButton
+from prisonbuttons import ButtonsPrison
+from gamefields import Prison
 
 config = Config()
 
@@ -119,12 +121,16 @@ class MapGUI:
         self.players_positions[player] = (self.players_positions[player] + random.randint(1, 6)) % config.fields_amount
         position = self.players_positions[player]
 
+        # это просто чтобы пока что работало, потом мб свяжется с картой
         if position in [2, 11, 14]:
             teleport_button = TeleportButton()
             index = teleport_button.action_teleport(self.players_positions[player])
-            print("Гравця телепортувало в клітину:", index, "з клітини",  self.players_positions[player])
+            print("Гравця телепортувало в клітину:", index, "з клітини", self.players_positions[player])
             self.players_positions[player] = index
-
+        elif position == 4:
+            print("Гравець потрапив у в'язницю")
+        elif position == 7:
+            print("Гравець потрапив у казіно")
 
         print(player, self.players_positions[player])
         self.show_players()

@@ -1,8 +1,12 @@
 import tkinter.font as tkfont
 import tkinter as tk
+
+from casinobuttons import CasinoButtons
+from gamefields import Casino, Prison
 from map_gui import MapGUI
 from Configuration import Config
 from players import *
+from prisonbuttons import ButtonsPrison
 
 config = Config()
 general_map = None
@@ -235,6 +239,34 @@ def main_game():
     back_button3.grid(row=0, column=0, sticky="nsew")
     button4 = tk.Button(frame5, text="Кинути кубик", command=general_map.move_star, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
     button4.grid(row=0, column=0, sticky="nsew")
+
+
+    # если игрок со статусом в тюрьме, для него открывается фрейм с тюрьмой, так же при нажатии кнопки "сидеть"
+    # аналогично для казино
+    # идея - сделать цикл для каждого игрока, по очереди будет индивидуально для каждого игрока создаваться его фрейм в зависимости от его статуса?(тут)
+    # переход к следующему игроку, возможно ли осуществить для отдельного файла?
+    # def replace_button1():
+    #     back_button3.grid_forget()  # Remove the current button
+    #     button4.grid_forget()  # Remove the current button
+    #     casino1 = Casino()
+    #     player1 = client(HumanCreator(), "name") # не обращать внимания, тут должен быть текущий игрок и клетка
+    #     button7 = CasinoButtons(frame5, casino1, player1)
+    #     button7.grid(row=0, column=0, sticky="nsew")
+    #
+    # def replace_button2():
+    #     back_button3.grid_forget()  # Remove the current button
+    #     button4.grid_forget()  # Remove the current button
+    #     prison = Prison()
+    #     player1 = client(HumanCreator(), "name")
+    #     button8 = ButtonsPrison(frame5, prison, player1)
+    #     button8.grid(row=0, column=0, sticky="nsew")
+    #
+    # button5 = tk.Button(frame5, text="1", command=replace_button1, font=(config.font, config.font_size),
+    #                     bg=config.colour_button, fg=config.colour_text)
+    # button6 = tk.Button(frame5, text="2", command=replace_button2, font=(config.font, config.font_size),
+    #                     bg=config.colour_button, fg=config.colour_text)
+    # button5.grid(row=0, column=0, sticky="nsew")
+    # button6.grid(row=0, column=0, sticky="nsew")
 
 
 root.mainloop()
