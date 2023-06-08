@@ -4,6 +4,7 @@ from Configuration import Config
 import random
 from map import Map
 from players import *
+from teleportbuttons import TeleportButton
 
 config = Config()
 
@@ -81,12 +82,12 @@ class MapGUI:
             self.circles_coords.append([x_start + i * (2 * self.circle_radius + gap),
                                         y_start + 0 * (2 * self.circle_radius + gap)])
         for i in range(1, num_rows):
-            self.circles_coords.append([x_start + (num_columns-1) * (2 * self.circle_radius + gap),
+            self.circles_coords.append([x_start + (num_columns - 1) * (2 * self.circle_radius + gap),
                                         y_start + i * (2 * self.circle_radius + gap)])
-        for i in range(num_columns-2, -1, -1):
+        for i in range(num_columns - 2, -1, -1):
             self.circles_coords.append([x_start + i * (2 * self.circle_radius + gap),
-                                        y_start + (num_rows-1) * (2 * self.circle_radius + gap)])
-        for i in range(num_columns-2, 0, -1):
+                                        y_start + (num_rows - 1) * (2 * self.circle_radius + gap)])
+        for i in range(num_columns - 2, 0, -1):
             self.circles_coords.append([x_start + 0 * (2 * self.circle_radius + gap),
                                         y_start + i * (2 * self.circle_radius + gap)])
         self.show_cells()
@@ -104,7 +105,8 @@ class MapGUI:
                 self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
 
             else:
-                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='yellow', width=2)
+                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='yellow',
+                                        width=2)
         for i, coord in enumerate(self.circles_coords):
             x, y = coord
             text_x = x + self.circle_radius / 2  # Adjust the text position as needed
@@ -115,6 +117,15 @@ class MapGUI:
     def move_star(self):
         player = self.current_player
         self.players_positions[player] = (self.players_positions[player] + random.randint(1, 6)) % config.fields_amount
+        position = self.players_positions[player]
+
+        if position in [2, 11, 14]:
+            teleport_button = TeleportButton()
+            index = teleport_button.action_teleport(self.players_positions[player])
+            print("Гравця телепортувало в клітину:", index, "з клітини",  self.players_positions[player])
+            self.players_positions[player] = index
+
+
         print(player, self.players_positions[player])
         self.show_players()
         self.current_player += 1
