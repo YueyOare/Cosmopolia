@@ -269,10 +269,10 @@ class HumanProduct(Product):
     def set_own_planets(self, own_planets):
         self.__own_planets = own_planets
 
-    def set_more_money(self, value):
+    def set_more_money(self, value=100):
         self.set_money(self.__money + value)
 
-    def set_less_money(self, value):
+    def set_less_money(self, value=100):
         self.set_money(self.__money - value)
         # if self.__money - value > 0:
         #     self.set_money(self.__money - value)
