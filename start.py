@@ -262,44 +262,51 @@ def main_game():
 
     def playcasinod(bet):
         hide_buttons_show_button()
-        player = general_map.current_player
+        player = general_map.current_player - 1
         print("Метод казино працює")
         number = randint(0, 1)
-        #player.set_less_money(bet)  # ставка зроблена
+        summ = general_map.players[player].get_money() * bet
         if number == 1:  # рандомне число
-         #   player.set_more_money(bet * 3)
+            general_map.players[player].set_more_money(summ)
             label1.configure(text="Гравець " + general_map.players[player].get_name() + " виграв в казіно")
-            hide_button_show_buttons()
+            hide_buttons_show_button()
             return "WinCasino"
         else:
+            general_map.players[player].set_less_money(summ)
             label1.configure(text="Гравець " + general_map.players[player].get_name() + " програв в казіно")
-            hide_button_show_buttons()
+            hide_buttons_show_button()
             return "LoseCasino"  # гравець програв, завершити програму
 
     def playcasinoaction():
-        current_buttons1 = [button_cas_play_act10, button_cas_play_act20, button_cas_play_act50]
-        hide_button_show_buttons()
+        global current_buttons
+        current_buttons1 = [button_cas_play_act10, button_cas_play_act20, button_cas_play_act50] # вибір з 3х кнопок
+        button_dice_roll.grid_forget()  # Приховуємо кнопку кинути кубик
+        for i, button in enumerate(current_buttons):
+            button.grid_forget() # приховуємо кнопки
+        for i, button in enumerate(current_buttons1):
+            button.grid(row=i, column=0)  # Відображаємо кнопки
+        current_buttons = current_buttons1
 
     def playrouletteaction():
         hide_buttons_show_button()
-        player = general_map.current_player
+        player = general_map.current_player - 1
         number = randint(0, 1)
-        #bet = player.get_money()  # тут связь с игроком нормальая
-        bet = 50
-        #player.set_less_money(bet)
+        bet = general_map.players[player].get_money()
+        general_map.players[player].set_less_money(bet)
         if number == 1:  # рандомне число
-         #   player.set_more_money(bet * 3)
-            label1.configure(text="Гравець " + general_map.players[player].get_name() + " виграв")
-            hide_button_show_buttons()
+            general_map.players[player].set_more_money(bet * 3)
+            label1.configure(text="Гравець " + general_map.players[player].get_name() + " виграв в рулетці")
+            hide_buttons_show_button()
             return "WinRoulette"
         else:
-          #  player.set_died()
-            label1.configure(text="Гравець " + general_map.players[player].get_name() + " застрелився")
-            hide_button_show_buttons() # кнопки надо убрать
+            #  player.set_died() потом добавим в граф. часть
+            label1.configure(
+                text="Гравець " + general_map.players[player].get_name() + " 'застрелився' ")
+            hide_buttons_show_button()  # кнопки надо убрать
             return "LoseRoulette"  # гравець програв і помер, завершити програму
 
     def escapeaction():
-        player = general_map.current_player
+        player = general_map.current_player - 1
         label1.configure(text="Гравець " + general_map.players[player].get_name() + " відмовився грати в казіно")
         hide_buttons_show_button()
 
@@ -343,12 +350,14 @@ def main_game():
             label0.config(text="Випало: " + str(general_map.dice))
         if result[0] == 1:  # телепорт
             label1.configure(
-                text="Гравця " + general_map.players[general_map.current_player].get_name() + " телепортувало з клітини " + str(
+                text="Гравця " + general_map.players[
+                    general_map.current_player].get_name() + " телепортувало з клітини " + str(
                     result[1]) + " в клітину " + str(result[2]))
             label2.configure(text="")
         elif result[0] == 2:  # тюрьма первое попадание, запретить ходить
             label1.configure(
-                text="Гравець " + general_map.players[general_map.current_player].get_name() + " потрапив у тюрму, він тепер не може ходити")
+                text="Гравець " + general_map.players[
+                    general_map.current_player].get_name() + " потрапив у тюрму, він тепер не може ходити")
             general_map.players[general_map.current_player].set_enabled(False)
             label2.configure(text="")
         elif result[0] == 3:  # шанс
@@ -363,18 +372,21 @@ def main_game():
             label2.configure(text="")
             if result[1] == 0:  # пуста планета
                 label1.configure(
-                    text="Гравець " + general_map.players[general_map.current_player].get_name() + " потрапив на пусту планету і може її купити")
+                    text="Гравець " + general_map.players[
+                        general_map.current_player].get_name() + " потрапив на пусту планету і може її купити")
                 current_buttons = [button_buy, button_refuse1]
                 hide_button_show_buttons()
             elif result[1] == 1:  # чужа планета
                 player = general_map.current_player
                 label1.configure(
-                    text="Гравець " + general_map.players[player].get_name() + " потрапив на чужу планету і має сплатити податок")
+                    text="Гравець " + general_map.players[
+                        player].get_name() + " потрапив на чужу планету і має сплатити податок")
                 general_map.map.array_Fields_in_map[general_map.players_positions[player]].pay(
                     general_map.players[player])
             elif result[1] == 2:  # своя планета
                 label1.configure(
-                    text="Гравець " + general_map.players[general_map.current_player].get_name() + " потрапив на свою планету і може її покращити")
+                    text="Гравець " + general_map.players[
+                        general_map.current_player].get_name() + " потрапив на свою планету і може її покращити")
                 current_buttons = [button_upgrade, button_refuse2]
                 hide_button_show_buttons()
 
@@ -384,6 +396,7 @@ def main_game():
             label2.configure(text="")
             current_buttons = [button_cas_play, button_rou_play, button_escape]
             hide_button_show_buttons()
+        # если следующий игрок не может ходить, мы его выпускаем, ход выдаем следующему. он сидеть будет 1 ход
         general_map.current_player += 1
         general_map.current_player %= general_map.players_amount
 
@@ -404,37 +417,32 @@ def main_game():
                                font=(config.font, config.font_size),
                                bg=config.colour_button, fg=config.colour_text)
 
+    # кнопки 1 частини казино, де гравець може зіграти в рулетку, в казино або піти геть
     button_cas_play = tk.Button(frame5, text="Грати в казіно", command=playcasinoaction,
-                                width=20, height=2,
-                                bg=config.colour_button,
-                                bd=2, relief=tk.SOLID, font=("Arial", 12), activebackground="#6600ff")
+                                bg=config.colour_button, fg=config.colour_text,
+                                font=(config.font, config.font_size))
     button_rou_play = tk.Button(frame5, text="Грати в рулетку", command=playrouletteaction,
-                                width=20, height=2,
-                                bg=config.colour_button,
-                                bd=2, relief=tk.SOLID, font=("Arial", 12))
+                                bg=config.colour_button, fg=config.colour_text,
+                                font=(config.font, config.font_size))
     button_escape = tk.Button(frame5, text="Відмовитися", command=escapeaction,
-                              width=20, height=2,
-                              bg=config.colour_button,
-                              bd=2, relief=tk.SOLID, font=("Arial", 12))
+                              bg=config.colour_button, fg=config.colour_text,
+                              font=(config.font, config.font_size))
 
-    # general_map.current_player.get_money() * 0.1
+    # кнопки 2 частини казино, де гравець обирає скільки хоче поставити
     button_cas_play_act10 = tk.Button(frame5, text="Поставити 10%",
                                       command=lambda: playcasinod(0.1),
-                                      width=20, height=2,
-                                      bg=config.colour_button, bd=2, relief=tk.SOLID,
-                                      font=(config.font, config.font_size), )
+                                      bg=config.colour_button, fg=config.colour_text,
+                                      font=(config.font, config.font_size))
 
     button_cas_play_act20 = tk.Button(frame5, text="Поставити 20%",
                                       command=lambda: playcasinod(0.2),
-                                      width=20, height=2,
-                                      bg=config.colour_button, bd=2, relief=tk.SOLID,
-                                      font=(config.font, config.font_size), )
+                                      bg=config.colour_button, fg=config.colour_text,
+                                      font=(config.font, config.font_size))
 
     button_cas_play_act50 = tk.Button(frame5, text="Поставити 50%",
                                       command=lambda: playcasinod(0.5),
-                                      width=20, height=2,
-                                      bg=config.colour_button, bd=2, relief=tk.SOLID,
-                                      font=(config.font, config.font_size), )
+                                      bg=config.colour_button, fg=config.colour_text,
+                                      font=(config.font, config.font_size))
 
 
 root.mainloop()
