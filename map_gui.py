@@ -1,18 +1,17 @@
-import random
 import tkinter as tk
-
 from PIL import Image, ImageTk
-
+from Configuration import Config
+import random
 from map import Map
 from players import *
 from teleportbuttons import TeleportButton
-
+from tkinter import font
 config = Config()
 
 
 class MapGUI:
     def __init__(self, root, num_circles, players_amount=2):
-        self.dice = None
+        self.photo = None
         self.cell_image_tk = None
         self.star_image_tk = None
         self.circles_coords = None
@@ -28,11 +27,9 @@ class MapGUI:
         self.canvas = tk.Canvas(self.root, bg=config.colour_background)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Configure>", self.redraw_table)
-        self.map = Map()  # масив об'єктів полів
-        self.players = []  # масив об'єктів "гравець"
-        self.current_player = 0  # номер поточного гравця
-        self.prison = self.map.array_Fields_in_map[4]  # об'єкт "тюрма" з масива об'єктів полів
-        self.owners = [None for i in range(config.fields_amount)]
+        self.map = Map()
+        self.players = []
+        self.current_player = 0
 
     def clear(self, players_amount=2):
         self.players_amount = players_amount
@@ -40,10 +37,6 @@ class MapGUI:
         self.map = Map()
         self.players = []
         self.current_player = 0
-        self.star_image_tk_arr = [None for i in range(players_amount)]
-        self.owners = [None for i in range(config.fields_amount)]
-        for i in range(players_amount):
-            self.load_star_image(i)
 
     def load_star_image(self, num):
         self.star_image = config.players_icons[num]
@@ -61,16 +54,13 @@ class MapGUI:
         for i in range(self.players_amount):
             self.load_star_image(i)
             x, y = self.circles_coords[self.players_positions[i]]
-            self.canvas.create_image(x+5*i, y, anchor=tk.NW, image=self.star_image_tk_arr[i])
+            self.canvas.create_image(x, y, anchor=tk.NW, image=self.star_image_tk_arr[i])
 
     def show_cells(self):
         for i in range(config.fields_amount):
             self.load_cell_image(i)
             x, y = self.circles_coords[i]
             self.canvas.create_image(x, y, anchor=tk.NW, image=self.cell_image_tk_arr[i])
-
-    def own_planet(self, player):
-        self.owners[self.players_positions[player]] = player
 
     def redraw_table(self, event=None):
         self.canvas.delete("all")
@@ -88,6 +78,13 @@ class MapGUI:
 
         x_start = 5 + (width - total_width) / 2
         y_start = 5 + (height - total_height) / 2
+
+        # Додаємо зображення заднього фону
+        image = config.image_for_map
+        image = image.resize((int(width * 0.7), int(height * 0.7)))
+        self.photo = ImageTk.PhotoImage(image)
+        self.canvas.create_image(x_start + self.circle_radius, y_start + self.circle_radius, anchor=tk.NW, image=self.photo)
+
         self.circles_coords = []
         for i in range(num_columns):
             self.circles_coords.append([x_start + i * (2 * self.circle_radius + gap),
@@ -102,70 +99,44 @@ class MapGUI:
             self.circles_coords.append([x_start + 0 * (2 * self.circle_radius + gap),
                                         y_start + i * (2 * self.circle_radius + gap)])
         self.show_cells()
-        for i in range(config.fields_amount):
-            if self.owners[i] is not None:
-                x, y = self.circles_coords[i]
-                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline=config.players_colours[self.owners[i]],
+        for i in range(self.num_circles):
+            column = i % num_columns
+            row = i // num_columns
+
+            x = x_start + column * (2 * self.circle_radius + gap)
+            y = y_start + row * (2 * self.circle_radius + gap)
+
+            if row != 0 and row != num_rows - 1 and column != 0 and column != num_columns - 1:
+                image = Image.new("RGBA", (int(2 * self.circle_radius), int(2 * self.circle_radius)),
+                                  "#00000000")
+                image_tk = ImageTk.PhotoImage(image)
+                self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
+
+            else:
+                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='yellow',
                                         width=2)
         for i, coord in enumerate(self.circles_coords):
             x, y = coord
-            text_x = x + self.circle_radius / 2  # Adjust the text position as needed
-            text_y = y + self.circle_radius / 2  # Adjust the text position as needed
-            self.canvas.create_text(text_x, text_y, text=str(i), anchor=tk.CENTER, fill="white")
+            text_x = x + self.circle_radius  # Adjust the text position as needed
+            text_y = y + self.circle_radius  # Adjust the text position as needed
+            custom_font = font.Font(family=config.font, size=int(self.circle_radius/5), weight=config.font_weight)
+            if config.array_Fields[i] == "планета":
+                self.canvas.create_text(text_x, text_y, text=self.map.array_Fields_in_map[i].get_name_planet(),
+                                        anchor=tk.CENTER, fill="black", font=custom_font)
         self.show_players()
 
-    def planet_action(self):
-        self.show_players()
-        answer = self.map.array_Fields_in_map[self.players_positions[self.current_player]].event(self.players[self.current_player])
-        if answer == "player can buy":
-            return 0, 0   # поле - планета, дії - пуста планета
-        elif answer == "player must pay":
-            return 0, 1   # поле - планета, дії - чужа планета
-        elif answer == "player is in his field":
-            return 0, 2   # поле - планета, дії - своя планета
-        else:
-            return [-1]
-
-    def teleport_action(self):
+    def move_star(self):
         player = self.current_player
-        teleport_button = TeleportButton()
-        teleport_index = self.players_positions[player]
-        player_index = teleport_button.action_teleport(self.players_positions[player])
-        self.players_positions[player] = player_index
-        self.players[player].set_current_field(player_index)
-        self.show_players()
-        return 1, teleport_index, player_index
+        self.players_positions[player] = (self.players_positions[player] + random.randint(1, 6)) % config.fields_amount
+        position = self.players_positions[player]
+        if position in [2, 11, 14]:
+            teleport_button = TeleportButton()
+            index = teleport_button.action_teleport(self.players_positions[player])
+            print("Гравця телепортувало в клітину:", index, "з клітини",  self.players_positions[player])
+            self.players_positions[player] = index
 
-    def prison_action(self):
-        self.show_players()
-        return [2]
 
-    def chance_action(self):
+        print(player, self.players_positions[player])
         self.show_players()
-        return [3]
-
-    def casino_action(self):
-        self.show_players()
-        return [4]
-
-    def roll_dice(self):
-        player = self.current_player  # дізнаємось поточного гравця
-        if self.players[player].get_enabled():
-            self.dice = random.randint(1, 6)
-            self.players[player].move_to(self.dice)  # двигаємо поточного гравця
-            self.players_positions[player] = self.players[
-                player].get_current_field()  # оновлюємо його позицію в масиві позицій
-            position = self.players_positions[player]  # зберігаємо його позицію
-            if config.array_Fields[position] == "телепорт":  # якщо він наступив на телепорт
-                return self.teleport_action()
-            elif config.array_Fields[position] == "планета":  # якщо він наступив на планету
-                return self.planet_action()
-            elif config.array_Fields[position] == "тюрма":  # якщо він наступив на тюрму
-                return self.prison_action()
-            elif config.array_Fields[position] == "казіно":   # тут має бути казіно
-                return self.casino_action()
-            elif config.array_Fields[position] == "шанс":  # якщо він наступив на шанс
-                return self.chance_action()
-        else:
-            self.players[player].set_enabled(True)
-        return [-1]
+        self.current_player += 1
+        self.current_player %= self.players_amount
