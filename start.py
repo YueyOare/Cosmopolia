@@ -102,7 +102,7 @@ class PlayerCreationGUI:
                                fg=config.colour_text)
         self.label3.grid(row=0, column=0, columnspan=3, pady=50, padx=50)
         self.entrys = []
-        self.humans = [0 for i in range(self.Amount_of_Players)]
+        self.humans = [1 for i in range(self.Amount_of_Players)]
         for i in range(self.Amount_of_Players):
             name_entry = tk.Entry(self.parent2, font=self.custom_font)
             self.entrys.append(name_entry)
@@ -237,17 +237,23 @@ def main_game():
     frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
     back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
     back_button3.grid(row=0, column=0, sticky="nsew")
-    # button4 = tk.Button(frame5, text="Кинути кубик", command=general_map.move_star, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
-    # button4.grid(row=0, column=0, sticky="nsew")
+    label1 = tk.Label(frame6, text="Гра починається",
+                               bg=config.colour_background,
+                               fg=config.colour_text)
+    label1.grid(row=0, column=0, sticky="nsew")
 
-    def handle_button_click(): # при нажатии "бросить кубик" - событие, тут вроде получилось сделать связь со след игроками (ага)
-        result = general_map.move_star()
-        if result[0] == 0:  # телепорт, ничего особенного
-            print("0телепорт")
-        elif result[0] == 1:  # тюрьма первое попадание, запретить ходить
-            print("1тюрьма")
-        elif result[0] == 2:  # казино
-            print("2казино")
+    def handle_button_click(): # при нажатии "бросить кубик"
+        result = general_map.roll_dice() # гравця переміщує та повертається на який тип клітини його перемістило
+        if result[0] == 1:  # телепорт
+            print("Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(result[1]) + " в клітину " + str(result[2]))
+            label1.configure(
+                text="Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(result[1]) + " в клітину " + str(result[2]))
+        elif result[0] == 2:  # тюрьма первое попадание, запретить ходить
+            label1.configure(
+                text="Гравець " + str(general_map.current_player) + " потрапив у тюрму, він тепер не може ходити")
+            general_map.players[general_map.current_player].set_enabled(False)
+        elif result[0] == 3:  # шанс
+            label1.configure(text="Вам випала подія")
             #     back_button3.grid_forget()
             # button4.grid_forget()
             # casino1 = Casino()
@@ -257,16 +263,22 @@ def main_game():
             # if button7 == 3: # типо, казино должно возвращать число, а отпускаем уже тут, но оно не торопится это делать
             #     print("свобода!")
             #     button7.grid_forget()
-        elif result[0] == 3:  # планета, тут будет купля/плата налогов
-            print("3планета")
-        if result[1] == 4:  # своё окошко для игрока в тюрьме, возможно, именно тюрьма будет немного по другому тут (тоесть остальное норм, это под вопросом)
-            print("след ход тюрьма") # скорее всего тюрьму упростим
+        elif result[0] == 0:  # планета, тут будет купля/плата налогов
+            label1.configure(
+                text="Гравець " + str(general_map.current_player) + " потрапив на пусту планету і може її купити")
+        # if result[1] == 4:  # своё окошко для игрока в тюрьме, возможно, именно тюрьма будет немного по другому тут (тоесть остальное норм, это под вопросом)
+        #     label1.configure(text="казіно")
             #     back_button3.grid_forget()
             # button4.grid_forget()
             # prison = Prison() # возможно или это придется брать из мапы
             # player1 = client(HumanCreator(), "name") # тут должен быть текущий игрок!!!!
             # button8 = ButtonsPrison(frame5, prison, player1) # важно, что дальше должно вернуться всё к кнопке 4
             # button8.grid(row=0, column=0, sticky="nsew")
+        elif result[0] == 4:   # казіно
+            label1.configure(
+                text="Гравець " + str(general_map.current_player) + " потрапив у казіно")
+        general_map.current_player += 1
+        general_map.current_player %= general_map.players_amount
 
     button4 = tk.Button(frame5, text="Кинути кубик", command=handle_button_click, font=(config.font, config.font_size),
                         bg=config.colour_button, fg=config.colour_text)

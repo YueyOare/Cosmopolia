@@ -44,4 +44,3 @@ class Config():
    image_ufo_green = Image.open("UFO_Green.PNG")
    image_ufo_yellow = Image.open("UFO_Yellow.PNG")
    players_icons = [image_ufo_red, image_ufo_blue, image_ufo_green, image_ufo_yellow]
-

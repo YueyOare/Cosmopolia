@@ -1,12 +1,11 @@
-import tkinter as tk
-from PIL import Image, ImageTk
-from Configuration import Config
 import random
+import tkinter as tk
+
+from PIL import Image, ImageTk
+
 from map import Map
 from players import *
 from teleportbuttons import TeleportButton
-from prisonbuttons import ButtonsPrison
-from gamefields import Prison
 
 config = Config()
 
@@ -28,10 +27,10 @@ class MapGUI:
         self.canvas = tk.Canvas(self.root, bg=config.colour_background)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Configure>", self.redraw_table)
-        self.map = Map()
-        self.players = []
-        self.current_player = 0
-        self.prison = Prison()  # может это должно создаваться в мапе
+        self.map = Map()  # масив об'єктів полів
+        self.players = []  # масив об'єктів "гравець"
+        self.current_player = 0  # номер поточного гравця
+        self.prison = self.map.array_Fields_in_map[4]  # об'єкт "тюрма" з масива об'єктів полів
 
     def clear(self, players_amount=2):
         self.players_amount = players_amount
@@ -39,6 +38,9 @@ class MapGUI:
         self.map = Map()
         self.players = []
         self.current_player = 0
+        self.star_image_tk_arr = [None for i in range(players_amount)]
+        for i in range(players_amount):
+            self.load_star_image(i)
 
     def load_star_image(self, num):
         self.star_image = config.players_icons[num]
@@ -117,45 +119,50 @@ class MapGUI:
             self.canvas.create_text(text_x, text_y, text=str(i), anchor=tk.CENTER, fill="white")
         self.show_players()
 
-    def move_star(self):
+    def planet_action(self):
+        self.show_players()
+        return [0]
+
+    def teleport_action(self):
         player = self.current_player
-        self.players_positions[player] = (self.players_positions[player] + random.randint(1, 6)) % config.fields_amount
-        position = self.players_positions[player]
-        # это просто чтобы пока что работало, потом мб свяжется с картой
-        if position in [2, 11, 14]:
-            teleport_button = TeleportButton()
-            index = teleport_button.action_teleport(self.players_positions[player])
-            print("Гравця телепортувало в клітину:", index, "з клітини", self.players_positions[player])
-            self.players_positions[player] = index
-            print(player, self.players_positions[player])
-            self.show_players()
-            self.current_player += 1
-            self.current_player %= self.players_amount
-            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко (если упростим тюрьму мб уберем)
-                return 0, 4
-            return 0, 0
-        elif position == 4:
-            print("Гравець потрапив у в'язницю")
-            print(player, self.players_positions[player])
-            self.show_players()
-            self.current_player += 1
-            self.current_player %= self.players_amount
-            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко
-                return 1, 4
-            return 1, 0
-        elif position == 7:
-            print("Гравець потрапив у казіно")
-            print(player, self.players_positions[player])
-            self.show_players()
-            self.current_player += 1
-            self.current_player %= self.players_amount
-            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко
-                return 2, 4
-            return 2, 0
+        teleport_button = TeleportButton()
+        teleport_index = self.players_positions[player]
+        player_index = teleport_button.action_teleport(self.players_positions[player])
+        self.players_positions[player] = player_index
+        self.players[player].set_current_field(player_index)
+        self.show_players()
+        return 1, teleport_index, player_index
+
+    def prison_action(self):
+        self.show_players()
+        return [2]
+
+    def chance_action(self):
+        self.show_players()
+        return [3]
+
+    def casino_action(self):
+        self.show_players()
+        return [4]
+
+    def roll_dice(self):
+        dice = random.randint(1, 6)
+        player = self.current_player  # дізнаємось поточного гравця
+        if self.players[player].get_enabled():
+            self.players[player].move_to(dice)  # двигаємо поточного гравця
+            self.players_positions[player] = self.players[
+                player].get_current_field()  # оновлюємо його позицію в масиві позицій
+            position = self.players_positions[player]  # зберігаємо його позицію
+            if config.array_Fields[position] == "телепорт":  # якщо він наступив на телепорт
+                return self.teleport_action()
+            elif config.array_Fields[position] == "планета":  # якщо він наступив на планету
+                return self.planet_action()
+            elif config.array_Fields[position] == "тюрма":  # якщо він наступив на тюрму
+                return self.prison_action()
+            elif config.array_Fields[position] == "шанс":   # тут має бути казіно
+                return self.casino_action()
+            elif config.array_Fields[position] == "шанс":  # якщо він наступив на шанс
+                return self.chance_action()
         else:
-            self.show_players()
-            self.current_player += 1
-            self.current_player %= self.players_amount
-            if self.players_positions[self.current_player] == 4:  # если следующий игрок должен быть в тюрьме, ему запустится своё окошко
-                return 3, 4
-            return 3, 0
+            self.players[player].set_enabled(True)
+        return [-1]
