@@ -31,6 +31,7 @@ class MapGUI:
         self.players = []  # масив об'єктів "гравець"
         self.current_player = 0  # номер поточного гравця
         self.prison = self.map.array_Fields_in_map[4]  # об'єкт "тюрма" з масива об'єктів полів
+        self.owners = [None for i in range(config.fields_amount)]
 
     def clear(self, players_amount=2):
         self.players_amount = players_amount
@@ -39,6 +40,7 @@ class MapGUI:
         self.players = []
         self.current_player = 0
         self.star_image_tk_arr = [None for i in range(players_amount)]
+        self.owners = [None for i in range(config.fields_amount)]
         for i in range(players_amount):
             self.load_star_image(i)
 
@@ -65,6 +67,9 @@ class MapGUI:
             self.load_cell_image(i)
             x, y = self.circles_coords[i]
             self.canvas.create_image(x, y, anchor=tk.NW, image=self.cell_image_tk_arr[i])
+
+    def own_planet(self, player):
+        self.owners[self.players_positions[player]] = player
 
     def redraw_table(self, event=None):
         self.canvas.delete("all")
@@ -96,22 +101,11 @@ class MapGUI:
             self.circles_coords.append([x_start + 0 * (2 * self.circle_radius + gap),
                                         y_start + i * (2 * self.circle_radius + gap)])
         self.show_cells()
-        # for i in range(self.num_circles):
-        #     column = i % num_columns
-        #     row = i // num_columns
-        #
-        #     x = x_start + column * (2 * self.circle_radius + gap)
-        #     y = y_start + row * (2 * self.circle_radius + gap)
-        #
-        #     if row != 0 and row != num_rows - 1 and column != 0 and column != num_columns - 1:
-        #         image = Image.new("RGBA", (int(2 * self.circle_radius), int(2 * self.circle_radius)),
-        #                           "#00000000")
-        #         image_tk = ImageTk.PhotoImage(image)
-        #         self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
-        #
-        #     else:
-        #         self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='yellow',
-        #                                 width=2)
+        for i in range(config.fields_amount):
+            if self.owners[i] is not None:
+                x, y = self.circles_coords[i]
+                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline=config.players_colours[self.owners[i]],
+                                        width=2)
         for i, coord in enumerate(self.circles_coords):
             x, y = coord
             text_x = x + self.circle_radius / 2  # Adjust the text position as needed
@@ -121,7 +115,15 @@ class MapGUI:
 
     def planet_action(self):
         self.show_players()
-        return 0, 0   # поле - планета, дії - пуста планета
+        answer = self.map.array_Fields_in_map[self.players_positions[self.current_player]].event(self.players[self.current_player])
+        if answer == "player can buy":
+            return 0, 0   # поле - планета, дії - пуста планета
+        elif answer == "player must pay":
+            return 0, 1   # поле - планета, дії - чужа планета
+        elif answer == "player is in his field":
+            return 0, 2   # поле - планета, дії - своя планета
+        else:
+            return [-1]
 
     def teleport_action(self):
         player = self.current_player

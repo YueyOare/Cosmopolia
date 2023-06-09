@@ -1,3 +1,4 @@
+import random
 import tkinter.font as tkfont
 import tkinter as tk
 
@@ -244,6 +245,10 @@ def main_game():
                       bg=config.colour_background,
                       fg=config.colour_text)
     label1.grid(row=0, column=0, sticky="nsew")
+    label2 = tk.Label(frame6, text="",
+                      bg=config.colour_background,
+                      fg=config.colour_text)
+    label2.grid(row=1, column=0, sticky="nsew")
 
     def hide_button_show_buttons():
         button_dice_roll.grid_forget()  # Приховуємо кнопку 1
@@ -256,35 +261,77 @@ def main_game():
         button_dice_roll.grid(row=0, column=0)
 
     def buy_planet():
+        player = general_map.current_player - 1
         label1.configure(
-            text="Гравець " + str(general_map.current_player) + " купив планету")
+            text="Гравець " + str(player) + " купив планету")
+        general_map.map.array_Fields_in_map[general_map.players_positions[player]].buy(general_map.players[player])
+        general_map.own_planet(player)
+        hide_buttons_show_button()
+
+    def refuse_to_buy_planet():
+        player = general_map.current_player - 1
+        label1.configure(
+            text="Гравець " + str(player) + " відмовився купувати планету")
+        hide_buttons_show_button()
+
+    def upgrade_planet():
+        player = general_map.current_player - 1
+        label1.configure(
+            text="Гравець " + str(player) + " покращив планету")
+        general_map.map.array_Fields_in_map[general_map.players_positions[player]].upgrade()
+        general_map.own_planet(player)
+        hide_buttons_show_button()
+
+    def refuse_to_upgrade_planet():
+        player = general_map.current_player - 1
+        label1.configure(
+            text="Гравець " + str(player) + " відмовився покращувати планету")
         hide_buttons_show_button()
 
     def handle_button_click():  # при нажатии "бросить кубик"
         global current_buttons
         result = general_map.roll_dice()  # гравця переміщує та повертається на який тип клітини його перемістило
         if result[0] == 1:  # телепорт
-            print("Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(
-                result[1]) + " в клітину " + str(result[2]))
             label1.configure(
                 text="Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(
                     result[1]) + " в клітину " + str(result[2]))
+            label2.configure(text="")
         elif result[0] == 2:  # тюрьма первое попадание, запретить ходить
             label1.configure(
                 text="Гравець " + str(general_map.current_player) + " потрапив у тюрму, він тепер не може ходити")
             general_map.players[general_map.current_player].set_enabled(False)
+            label2.configure(text="")
         elif result[0] == 3:  # шанс
             label1.configure(text="Вам випала подія")
-
-        elif result[0] == 0:  # планета, тут будет купля/плата налогов
-            if result[1] == 0:
+            if random.randint(0, 1):
+                label2.configure(text="Ви отримуєте гроші")
+                general_map.players[general_map.current_player].set_more_money()
+            else:
+                label2.configure(text="Ви втрачаєте гроші")
+                general_map.players[general_map.current_player].set_less_money()
+        elif result[0] == 0:  # планета
+            label2.configure(text="")
+            if result[1] == 0:  # пуста планета
                 label1.configure(
                     text="Гравець " + str(general_map.current_player) + " потрапив на пусту планету і може її купити")
-                current_buttons = [button_buy]
+                current_buttons = [button_buy, button_refuse1]
                 hide_button_show_buttons()
+            elif result[1] == 1:  # чужа планета
+                player = general_map.current_player
+                label1.configure(
+                    text="Гравець " + str(player) + " потрапив на чужу планету і має сплатити податок")
+                general_map.map.array_Fields_in_map[general_map.players_positions[player]].pay(
+                    general_map.players[player])
+            elif result[1] == 2:  # своя планета
+                label1.configure(
+                    text="Гравець " + str(general_map.current_player) + " потрапив на свою планету і може її покращити")
+                current_buttons = [button_upgrade, button_refuse2]
+                hide_button_show_buttons()
+
         elif result[0] == 4:  # казіно
             label1.configure(
                 text="Гравець " + str(general_map.current_player) + " потрапив у казіно")
+            label2.configure(text="")
         general_map.current_player += 1
         general_map.current_player %= general_map.players_amount
 
@@ -295,6 +342,16 @@ def main_game():
     button_buy = tk.Button(frame5, text="Купити планету", command=buy_planet,
                            font=(config.font, config.font_size),
                            bg=config.colour_button, fg=config.colour_text)
+    button_refuse1 = tk.Button(frame5, text="Відмовитись", command=refuse_to_buy_planet,
+                               font=(config.font, config.font_size),
+                               bg=config.colour_button, fg=config.colour_text)
+    button_upgrade = tk.Button(frame5, text="Покращити планету", command=upgrade_planet,
+                               font=(config.font, config.font_size),
+                               bg=config.colour_button, fg=config.colour_text)
+    button_refuse2 = tk.Button(frame5, text="Відмовитись", command=refuse_to_upgrade_planet,
+                               font=(config.font, config.font_size),
+                               bg=config.colour_button, fg=config.colour_text)
 
 
 root.mainloop()
+
