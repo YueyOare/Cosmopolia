@@ -268,11 +268,11 @@ def main_game():
         #player.set_less_money(bet)  # ставка зроблена
         if number == 1:  # рандомне число
          #   player.set_more_money(bet * 3)
-            label1.configure(text="Гравець " + str(player) + " виграв в казіно")
+            label1.configure(text="Гравець " + general_map.players[player].get_name() + " виграв в казіно")
             hide_button_show_buttons()
             return "WinCasino"
         else:
-            label1.configure(text="Гравець " + str(player) + " програв в казіно")
+            label1.configure(text="Гравець " + general_map.players[player].get_name() + " програв в казіно")
             hide_button_show_buttons()
             return "LoseCasino"  # гравець програв, завершити програму
 
@@ -289,18 +289,18 @@ def main_game():
         #player.set_less_money(bet)
         if number == 1:  # рандомне число
          #   player.set_more_money(bet * 3)
-            label1.configure(text="Гравець " + str(player) + " виграв")
+            label1.configure(text="Гравець " + general_map.players[player].get_name() + " виграв")
             hide_button_show_buttons()
             return "WinRoulette"
         else:
           #  player.set_died()
-            label1.configure(text="Гравець " + str(player) + " застрелився")
+            label1.configure(text="Гравець " + general_map.players[player].get_name() + " застрелився")
             hide_button_show_buttons() # кнопки надо убрать
             return "LoseRoulette"  # гравець програв і помер, завершити програму
 
     def escapeaction():
         player = general_map.current_player
-        label1.configure(text="Гравець " + str(player) + " відмовився грати в казіно")
+        label1.configure(text="Гравець " + general_map.players[player].get_name() + " відмовився грати в казіно")
         hide_buttons_show_button()
 
     def hide_buttons_show_button():
@@ -311,7 +311,7 @@ def main_game():
     def buy_planet():
         player = general_map.current_player - 1
         label1.configure(
-            text="Гравець " + str(player) + " купив планету")
+            text="Гравець " + general_map.players[player].get_name() + " купив планету")
         general_map.map.array_Fields_in_map[general_map.players_positions[player]].buy(general_map.players[player])
         general_map.own_planet(player)
         hide_buttons_show_button()
@@ -319,13 +319,13 @@ def main_game():
     def refuse_to_buy_planet():
         player = general_map.current_player - 1
         label1.configure(
-            text="Гравець " + str(player) + " відмовився купувати планету")
+            text="Гравець " + general_map.players[player].get_name() + " відмовився купувати планету")
         hide_buttons_show_button()
 
     def upgrade_planet():
         player = general_map.current_player - 1
         label1.configure(
-            text="Гравець " + str(player) + " покращив планету")
+            text="Гравець " + general_map.players[player].get_name() + " покращив планету")
         general_map.map.array_Fields_in_map[general_map.players_positions[player]].upgrade()
         general_map.own_planet(player)
         hide_buttons_show_button()
@@ -333,7 +333,7 @@ def main_game():
     def refuse_to_upgrade_planet():
         player = general_map.current_player - 1
         label1.configure(
-            text="Гравець " + str(player) + " відмовився покращувати планету")
+            text="Гравець " + general_map.players[player].get_name() + " відмовився покращувати планету")
         hide_buttons_show_button()
 
     def handle_button_click():  # при нажатии "бросить кубик"
@@ -343,12 +343,12 @@ def main_game():
             label0.config(text="Випало: " + str(general_map.dice))
         if result[0] == 1:  # телепорт
             label1.configure(
-                text="Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(
+                text="Гравця " + general_map.players[general_map.current_player].get_name() + " телепортувало з клітини " + str(
                     result[1]) + " в клітину " + str(result[2]))
             label2.configure(text="")
         elif result[0] == 2:  # тюрьма первое попадание, запретить ходить
             label1.configure(
-                text="Гравець " + str(general_map.current_player) + " потрапив у тюрму, він тепер не може ходити")
+                text="Гравець " + general_map.players[general_map.current_player].get_name() + " потрапив у тюрму, він тепер не може ходити")
             general_map.players[general_map.current_player].set_enabled(False)
             label2.configure(text="")
         elif result[0] == 3:  # шанс
@@ -363,24 +363,24 @@ def main_game():
             label2.configure(text="")
             if result[1] == 0:  # пуста планета
                 label1.configure(
-                    text="Гравець " + str(general_map.current_player) + " потрапив на пусту планету і може її купити")
+                    text="Гравець " + general_map.players[general_map.current_player].get_name() + " потрапив на пусту планету і може її купити")
                 current_buttons = [button_buy, button_refuse1]
                 hide_button_show_buttons()
             elif result[1] == 1:  # чужа планета
                 player = general_map.current_player
                 label1.configure(
-                    text="Гравець " + str(player) + " потрапив на чужу планету і має сплатити податок")
+                    text="Гравець " + general_map.players[player].get_name() + " потрапив на чужу планету і має сплатити податок")
                 general_map.map.array_Fields_in_map[general_map.players_positions[player]].pay(
                     general_map.players[player])
             elif result[1] == 2:  # своя планета
                 label1.configure(
-                    text="Гравець " + str(general_map.current_player) + " потрапив на свою планету і може її покращити")
+                    text="Гравець " + general_map.players[general_map.current_player].get_name() + " потрапив на свою планету і може її покращити")
                 current_buttons = [button_upgrade, button_refuse2]
                 hide_button_show_buttons()
 
         elif result[0] == 4:  # казіно
             label1.configure(
-                text="Гравець " + str(general_map.current_player) + " потрапив у казіно")
+                text="Гравець " + general_map.players[general_map.current_player].get_name() + " потрапив у казіно")
             label2.configure(text="")
             current_buttons = [button_cas_play, button_rou_play, button_escape]
             hide_button_show_buttons()

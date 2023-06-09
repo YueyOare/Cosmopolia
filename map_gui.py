@@ -162,7 +162,7 @@ class MapGUI:
                 return self.planet_action()
             elif config.array_Fields[position] == "тюрма":  # якщо він наступив на тюрму
                 return self.prison_action()
-            elif config.array_Fields[position] == "шанс":   # тут має бути казіно
+            elif config.array_Fields[position] == "казіно":   # тут має бути казіно
                 return self.casino_action()
             elif config.array_Fields[position] == "шанс":  # якщо він наступив на шанс
                 return self.chance_action()
