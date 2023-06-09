@@ -242,12 +242,14 @@ def main_game():
                              bg=config.colour_button, fg=config.colour_text)
     back_button3.grid(row=0, column=0, sticky="nsew")
     label1 = tk.Label(frame6, text="Гра починається",
-                      bg=config.colour_background,
-                      fg=config.colour_text)
+                      bg=config.colour_frame3,
+                      fg=config.colour_frame3_text,
+                      font=(config.font,config.font_size))
     label1.grid(row=0, column=0, sticky="nsew")
     label2 = tk.Label(frame6, text="",
-                      bg=config.colour_background,
-                      fg=config.colour_text)
+                      bg=config.colour_frame3,
+                      fg=config.colour_frame3_text,
+                      font=(config.font, config.font_size))
     label2.grid(row=1, column=0, sticky="nsew")
 
     def hide_button_show_buttons():
@@ -354,4 +356,3 @@ def main_game():
 
 
 root.mainloop()
-
