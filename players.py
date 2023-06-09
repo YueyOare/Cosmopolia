@@ -273,11 +273,12 @@ class HumanProduct(Product):
         self.set_money(self.__money + value)
 
     def set_less_money(self, value):
-        if self.__money - value > 0:
-            self.set_money(self.__money - value)
-            return 0
-        else:
-            return -1  # вивести повідомлення про неможливість цієї дії
+        self.set_money(self.__money - value)
+        # if self.__money - value > 0:
+        #     self.set_money(self.__money - value)
+        #     return 0
+        # else:
+        #     return -1  # вивести повідомлення про неможливість цієї дії
 
     def is_bankroot(self):
         return self.__money == 0

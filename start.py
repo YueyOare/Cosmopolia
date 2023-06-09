@@ -213,6 +213,8 @@ menu = StartMenuGUI(frame1, switch_to_frame2, quit)
 players_creation = PlayerCreationGUI(frame2, frame3)
 start_menu()
 
+current_buttons = []
+
 
 def main_game():
     frame1.grid_forget()
@@ -235,80 +237,64 @@ def main_game():
     frame6.grid(row=2, column=0, sticky="nsew")
     frame7.grid(row=3, column=0, sticky="nsew")
     frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
-    back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=(config.font, config.font_size), bg=config.colour_button, fg=config.colour_text)
+    back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=(config.font, config.font_size),
+                             bg=config.colour_button, fg=config.colour_text)
     back_button3.grid(row=0, column=0, sticky="nsew")
     label1 = tk.Label(frame6, text="Гра починається",
-                               bg=config.colour_background,
-                               fg=config.colour_text)
+                      bg=config.colour_background,
+                      fg=config.colour_text)
     label1.grid(row=0, column=0, sticky="nsew")
 
-    def handle_button_click(): # при нажатии "бросить кубик"
-        result = general_map.roll_dice() # гравця переміщує та повертається на який тип клітини його перемістило
+    def hide_button_show_buttons():
+        button_dice_roll.grid_forget()  # Приховуємо кнопку 1
+        for i, button in enumerate(current_buttons):
+            button.grid(row=i, column=0)  # Відображаємо кнопку
+
+    def hide_buttons_show_button():
+        for button in current_buttons:
+            button.grid_forget()
+        button_dice_roll.grid(row=0, column=0)
+
+    def buy_planet():
+        label1.configure(
+            text="Гравець " + str(general_map.current_player) + " купив планету")
+        hide_buttons_show_button()
+
+    def handle_button_click():  # при нажатии "бросить кубик"
+        global current_buttons
+        result = general_map.roll_dice()  # гравця переміщує та повертається на який тип клітини його перемістило
         if result[0] == 1:  # телепорт
-            print("Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(result[1]) + " в клітину " + str(result[2]))
+            print("Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(
+                result[1]) + " в клітину " + str(result[2]))
             label1.configure(
-                text="Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(result[1]) + " в клітину " + str(result[2]))
+                text="Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(
+                    result[1]) + " в клітину " + str(result[2]))
         elif result[0] == 2:  # тюрьма первое попадание, запретить ходить
             label1.configure(
                 text="Гравець " + str(general_map.current_player) + " потрапив у тюрму, він тепер не може ходити")
             general_map.players[general_map.current_player].set_enabled(False)
         elif result[0] == 3:  # шанс
             label1.configure(text="Вам випала подія")
-            #     back_button3.grid_forget()
-            # button4.grid_forget()
-            # casino1 = Casino()
-            # player1 = client(HumanCreator(), "name") # не обращать внимания, тут должен быть текущий игрок и клетка
-            # button7 = CasinoButtons(frame5, casino1, player1)
-            # button7.grid(row=0, column=0, sticky="nsew")
-            # if button7 == 3: # типо, казино должно возвращать число, а отпускаем уже тут, но оно не торопится это делать
-            #     print("свобода!")
-            #     button7.grid_forget()
+
         elif result[0] == 0:  # планета, тут будет купля/плата налогов
-            label1.configure(
-                text="Гравець " + str(general_map.current_player) + " потрапив на пусту планету і може її купити")
-        # if result[1] == 4:  # своё окошко для игрока в тюрьме, возможно, именно тюрьма будет немного по другому тут (тоесть остальное норм, это под вопросом)
-        #     label1.configure(text="казіно")
-            #     back_button3.grid_forget()
-            # button4.grid_forget()
-            # prison = Prison() # возможно или это придется брать из мапы
-            # player1 = client(HumanCreator(), "name") # тут должен быть текущий игрок!!!!
-            # button8 = ButtonsPrison(frame5, prison, player1) # важно, что дальше должно вернуться всё к кнопке 4
-            # button8.grid(row=0, column=0, sticky="nsew")
-        elif result[0] == 4:   # казіно
+            if result[1] == 0:
+                label1.configure(
+                    text="Гравець " + str(general_map.current_player) + " потрапив на пусту планету і може її купити")
+                current_buttons = [button_buy]
+                hide_button_show_buttons()
+        elif result[0] == 4:  # казіно
             label1.configure(
                 text="Гравець " + str(general_map.current_player) + " потрапив у казіно")
         general_map.current_player += 1
         general_map.current_player %= general_map.players_amount
 
-    button4 = tk.Button(frame5, text="Кинути кубик", command=handle_button_click, font=(config.font, config.font_size),
-                        bg=config.colour_button, fg=config.colour_text)
-    button4.grid(row=0, column=0, sticky="nsew")
-    # если игрок со статусом в тюрьме, для него открывается фрейм с тюрьмой, так же при нажатии кнопки "сидеть"
-    # аналогично для казино
-    # идея - сделать цикл для каждого игрока, по очереди будет индивидуально для каждого игрока создаваться его фрейм в зависимости от его статуса?(тут)
-    # переход к следующему игроку, возможно ли осуществить для отдельного файла?
-    # def replace_button1():
-    #     back_button3.grid_forget()  # Remove the current button
-    #     button4.grid_forget()  # Remove the current button
-    #     casino1 = Casino()
-    #     player1 = client(HumanCreator(), "name") # не обращать внимания, тут должен быть текущий игрок и клетка
-    #     button7 = CasinoButtons(frame5, casino1, player1)
-    #     button7.grid(row=0, column=0, sticky="nsew")
-    #
-    # def replace_button2():
-    #     back_button3.grid_forget()
-    #     button4.grid_forget()
-    #     prison = Prison()
-    #     player1 = client(HumanCreator(), "name")
-    #     button8 = ButtonsPrison(frame5, prison, player1)
-    #     button8.grid(row=0, column=0, sticky="nsew")
-    #
-    # button5 = tk.Button(frame5, text="1", command=replace_button1, font=(config.font, config.font_size),
-    #                     bg=config.colour_button, fg=config.colour_text)
-    # button6 = tk.Button(frame5, text="2", command=replace_button2, font=(config.font, config.font_size),
-    #                     bg=config.colour_button, fg=config.colour_text)
-    # button5.grid(row=0, column=0, sticky="nsew")
-    # button6.grid(row=0, column=0, sticky="nsew")
+    button_dice_roll = tk.Button(frame5, text="Кинути кубик", command=handle_button_click,
+                                 font=(config.font, config.font_size),
+                                 bg=config.colour_button, fg=config.colour_text)
+    button_dice_roll.grid(row=0, column=0, sticky="nsew")
+    button_buy = tk.Button(frame5, text="Купити планету", command=buy_planet,
+                           font=(config.font, config.font_size),
+                           bg=config.colour_button, fg=config.colour_text)
 
 
 root.mainloop()

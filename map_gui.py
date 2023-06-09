@@ -96,22 +96,22 @@ class MapGUI:
             self.circles_coords.append([x_start + 0 * (2 * self.circle_radius + gap),
                                         y_start + i * (2 * self.circle_radius + gap)])
         self.show_cells()
-        for i in range(self.num_circles):
-            column = i % num_columns
-            row = i // num_columns
-
-            x = x_start + column * (2 * self.circle_radius + gap)
-            y = y_start + row * (2 * self.circle_radius + gap)
-
-            if row != 0 and row != num_rows - 1 and column != 0 and column != num_columns - 1:
-                image = Image.new("RGBA", (int(2 * self.circle_radius), int(2 * self.circle_radius)),
-                                  "#00000000")
-                image_tk = ImageTk.PhotoImage(image)
-                self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
-
-            else:
-                self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='yellow',
-                                        width=2)
+        # for i in range(self.num_circles):
+        #     column = i % num_columns
+        #     row = i // num_columns
+        #
+        #     x = x_start + column * (2 * self.circle_radius + gap)
+        #     y = y_start + row * (2 * self.circle_radius + gap)
+        #
+        #     if row != 0 and row != num_rows - 1 and column != 0 and column != num_columns - 1:
+        #         image = Image.new("RGBA", (int(2 * self.circle_radius), int(2 * self.circle_radius)),
+        #                           "#00000000")
+        #         image_tk = ImageTk.PhotoImage(image)
+        #         self.canvas.create_image(x, y, anchor=tk.NW, image=image_tk)
+        #
+        #     else:
+        #         self.canvas.create_oval(x, y, x + 2 * self.circle_radius, y + 2 * self.circle_radius, outline='yellow',
+        #                                 width=2)
         for i, coord in enumerate(self.circles_coords):
             x, y = coord
             text_x = x + self.circle_radius / 2  # Adjust the text position as needed
@@ -121,7 +121,7 @@ class MapGUI:
 
     def planet_action(self):
         self.show_players()
-        return [0]
+        return 0, 0   # поле - планета, дії - пуста планета
 
     def teleport_action(self):
         player = self.current_player
