@@ -35,7 +35,7 @@ class Map(metaclass=Singleton):
         planet32 = system3.Planet("Планета32", 320, 105,  cost_of_branches=370, rent_increase=170)
         planet41 = system4.Planet("Планета41", 430, 150,  cost_of_branches=460, rent_increase=200)
         planet42 = system4.Planet("Планета42", 450, 155,  cost_of_branches=490, rent_increase=220)
-        planet43 = system4.Planet("Планета43", 455, 165,  cost_of_branches=500, rent_increase=250)
+        # planet43 = system4.Planet("Планета43", 455, 165,  cost_of_branches=500, rent_increase=250)
         array_planets = [planet11, planet12, planet21, planet22, planet23, planet31, planet32, planet41, planet42, planet43]
         for i in range(config.fields_amount):
             if config.array_Fields[i] == "старт":
