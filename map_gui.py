@@ -92,7 +92,7 @@ class MapGUI:
 
         # Додаємо зображення заднього фону
         image = config.image_for_map
-        image = image.resize((int(width * 0.7), int(height * 0.7)))
+        image = image.resize((int(self.circle_radius * 8), int(self.circle_radius * 8)))
         self.photo = ImageTk.PhotoImage(image)
         self.canvas.create_image(x_start + self.circle_radius, y_start + self.circle_radius, anchor=tk.NW,
                                  image=self.photo)
