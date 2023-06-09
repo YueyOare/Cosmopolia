@@ -39,6 +39,9 @@ class System():
         def get_name_planet(self):  # для відображення ім'я планет
             return self.__name_of_planet
 
+        def get_price_planet(self):  # для відображення ціни планет
+            return self.__price_buy
+
         def upgrade(self):  # Покращення нерухомості
             # print("Метод upgrade працює")
             self.__owner.set_less_money(self.__cost_of_branches)
