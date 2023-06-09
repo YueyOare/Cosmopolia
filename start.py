@@ -2,7 +2,6 @@ import random
 import tkinter.font as tkfont
 import tkinter as tk
 
-from casinobuttons import CasinoButtons
 from gamefields import Casino, Prison
 from map_gui import MapGUI
 from Configuration import Config
@@ -248,7 +247,7 @@ def main_game():
     label1 = tk.Label(frame6, text="Гра починається",
                       bg=config.colour_frame3,
                       fg=config.colour_frame3_text,
-                      font=(config.font,config.font_size))
+                      font=(config.font, config.font_size))
     label1.grid(row=0, column=0, sticky="nsew")
     label2 = tk.Label(frame6, text="",
                       bg=config.colour_frame3,
@@ -260,6 +259,49 @@ def main_game():
         button_dice_roll.grid_forget()  # Приховуємо кнопку 1
         for i, button in enumerate(current_buttons):
             button.grid(row=i, column=0)  # Відображаємо кнопку
+
+    def playcasinod(bet):
+        hide_buttons_show_button()
+        player = general_map.current_player
+        print("Метод казино працює")
+        number = randint(0, 1)
+        #player.set_less_money(bet)  # ставка зроблена
+        if number == 1:  # рандомне число
+         #   player.set_more_money(bet * 3)
+            label1.configure(text="Гравець " + str(player) + " виграв в казіно")
+            hide_button_show_buttons()
+            return "WinCasino"
+        else:
+            label1.configure(text="Гравець " + str(player) + " програв в казіно")
+            hide_button_show_buttons()
+            return "LoseCasino"  # гравець програв, завершити програму
+
+    def playcasinoaction():
+        current_buttons1 = [button_cas_play_act10, button_cas_play_act20, button_cas_play_act50]
+        hide_button_show_buttons()
+
+    def playrouletteaction():
+        hide_buttons_show_button()
+        player = general_map.current_player
+        number = randint(0, 1)
+        #bet = player.get_money()  # тут связь с игроком нормальая
+        bet = 50
+        #player.set_less_money(bet)
+        if number == 1:  # рандомне число
+         #   player.set_more_money(bet * 3)
+            label1.configure(text="Гравець " + str(player) + " виграв")
+            hide_button_show_buttons()
+            return "WinRoulette"
+        else:
+          #  player.set_died()
+            label1.configure(text="Гравець " + str(player) + " застрелився")
+            hide_button_show_buttons() # кнопки надо убрать
+            return "LoseRoulette"  # гравець програв і помер, завершити програму
+
+    def escapeaction():
+        player = general_map.current_player
+        label1.configure(text="Гравець " + str(player) + " відмовився грати в казіно")
+        hide_buttons_show_button()
 
     def hide_buttons_show_button():
         for button in current_buttons:
@@ -340,6 +382,8 @@ def main_game():
             label1.configure(
                 text="Гравець " + str(general_map.current_player) + " потрапив у казіно")
             label2.configure(text="")
+            current_buttons = [button_cas_play, button_rou_play, button_escape]
+            hide_button_show_buttons()
         general_map.current_player += 1
         general_map.current_player %= general_map.players_amount
 
@@ -359,6 +403,38 @@ def main_game():
     button_refuse2 = tk.Button(frame5, text="Відмовитись", command=refuse_to_upgrade_planet,
                                font=(config.font, config.font_size),
                                bg=config.colour_button, fg=config.colour_text)
+
+    button_cas_play = tk.Button(frame5, text="Грати в казіно", command=playcasinoaction,
+                                width=20, height=2,
+                                bg=config.colour_button,
+                                bd=2, relief=tk.SOLID, font=("Arial", 12), activebackground="#6600ff")
+    button_rou_play = tk.Button(frame5, text="Грати в рулетку", command=playrouletteaction,
+                                width=20, height=2,
+                                bg=config.colour_button,
+                                bd=2, relief=tk.SOLID, font=("Arial", 12))
+    button_escape = tk.Button(frame5, text="Відмовитися", command=escapeaction,
+                              width=20, height=2,
+                              bg=config.colour_button,
+                              bd=2, relief=tk.SOLID, font=("Arial", 12))
+
+    # general_map.current_player.get_money() * 0.1
+    button_cas_play_act10 = tk.Button(frame5, text="Поставити 10%",
+                                      command=lambda: playcasinod(0.1),
+                                      width=20, height=2,
+                                      bg=config.colour_button, bd=2, relief=tk.SOLID,
+                                      font=(config.font, config.font_size), )
+
+    button_cas_play_act20 = tk.Button(frame5, text="Поставити 20%",
+                                      command=lambda: playcasinod(0.2),
+                                      width=20, height=2,
+                                      bg=config.colour_button, bd=2, relief=tk.SOLID,
+                                      font=(config.font, config.font_size), )
+
+    button_cas_play_act50 = tk.Button(frame5, text="Поставити 50%",
+                                      command=lambda: playcasinod(0.5),
+                                      width=20, height=2,
+                                      bg=config.colour_button, bd=2, relief=tk.SOLID,
+                                      font=(config.font, config.font_size), )
 
 
 root.mainloop()
