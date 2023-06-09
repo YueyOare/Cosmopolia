@@ -12,6 +12,7 @@ config = Config()
 
 class MapGUI:
     def __init__(self, root, num_circles, players_amount=2):
+        self.dice = None
         self.cell_image_tk = None
         self.star_image_tk = None
         self.circles_coords = None
@@ -60,7 +61,7 @@ class MapGUI:
         for i in range(self.players_amount):
             self.load_star_image(i)
             x, y = self.circles_coords[self.players_positions[i]]
-            self.canvas.create_image(x, y, anchor=tk.NW, image=self.star_image_tk_arr[i])
+            self.canvas.create_image(x+5*i, y, anchor=tk.NW, image=self.star_image_tk_arr[i])
 
     def show_cells(self):
         for i in range(config.fields_amount):
@@ -148,10 +149,10 @@ class MapGUI:
         return [4]
 
     def roll_dice(self):
-        dice = random.randint(1, 6)
         player = self.current_player  # дізнаємось поточного гравця
         if self.players[player].get_enabled():
-            self.players[player].move_to(dice)  # двигаємо поточного гравця
+            self.dice = random.randint(1, 6)
+            self.players[player].move_to(self.dice)  # двигаємо поточного гравця
             self.players_positions[player] = self.players[
                 player].get_current_field()  # оновлюємо його позицію в масиві позицій
             position = self.players_positions[player]  # зберігаємо його позицію
