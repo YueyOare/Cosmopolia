@@ -241,6 +241,10 @@ def main_game():
     back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=(config.font, config.font_size),
                              bg=config.colour_button, fg=config.colour_text)
     back_button3.grid(row=0, column=0, sticky="nsew")
+    label0 = tk.Label(frame5, text="",
+                      bg=config.colour_background,
+                      fg=config.colour_text)
+    label0.grid(row=0, column=1, sticky="nsew")
     label1 = tk.Label(frame6, text="Гра починається",
                       bg=config.colour_frame3,
                       fg=config.colour_frame3_text,
@@ -293,6 +297,8 @@ def main_game():
     def handle_button_click():  # при нажатии "бросить кубик"
         global current_buttons
         result = general_map.roll_dice()  # гравця переміщує та повертається на який тип клітини його перемістило
+        if result[0] != -1:
+            label0.config(text="Випало: " + str(general_map.dice))
         if result[0] == 1:  # телепорт
             label1.configure(
                 text="Гравця " + str(general_map.current_player) + " телепортувало з клітини " + str(
