@@ -12,6 +12,7 @@ config = Config()
 
 class MapGUI:
     def __init__(self, root, num_circles, players_amount=2):
+        self.photo = None
         self.dice = None
         self.cell_image_tk = None
         self.star_image_tk = None
