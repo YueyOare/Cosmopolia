@@ -36,6 +36,9 @@ class System():
             # print("Метод set_owner працює")
             self.__owner = player
 
+        def get_name_planet(self):  # для відображення ім'я планет
+            return self.__name_of_planet
+
         def upgrade(self):  # Покращення нерухомості
             # print("Метод upgrade працює")
             self.__owner.set_less_money(self.__cost_of_branches)
@@ -147,7 +150,7 @@ class StartFinishStrategy(Strategy):
 
 class Chance:
     array_maps = []
-    
+
     def __init__(self, strategy=LostStrategy, choose_type=WhatChoose, string="Player took card", amount_of_maps=20, cache=10):
         super().__init__()
         self.__strategy = strategy
