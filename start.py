@@ -2,11 +2,9 @@ import random
 import tkinter.font as tkfont
 import tkinter as tk
 
-
 from map_gui import MapGUI
 from Configuration import Config
 from players import *
-
 
 config = Config()
 general_map = None
@@ -193,6 +191,7 @@ def create_map(frame):
 
 root = tk.Tk()
 root.geometry("800x500")
+root.title("Cosmopolia")
 root.configure(bg=config.colour_background)
 # root.configure(bg="white")
 window_width = root.winfo_screenwidth()
@@ -231,7 +230,12 @@ def main_game():
     root.grid_rowconfigure(3, weight=1)
     root.grid_columnconfigure(0, weight=1)
     root.grid_columnconfigure(1, weight=1)
-
+    frame4.grid_rowconfigure(0, weight=1)
+    frame4.grid_columnconfigure(0, weight=1)
+    frame4.grid_columnconfigure(1, weight=1)
+    frame4.grid_columnconfigure(2, weight=1)
+    frame6.grid_rowconfigure(0, weight=1)
+    frame6.grid_rowconfigure(1, weight=1)
     frame4.grid(row=0, column=0, sticky="nsew")
     frame5.grid(row=1, column=0, sticky="nsew")
     frame6.grid(row=2, column=0, sticky="nsew")
@@ -239,7 +243,7 @@ def main_game():
     frame8.grid(row=0, column=1, rowspan=4, sticky="nsew")
     back_button3 = tk.Button(frame4, text="Повернутися", command=start_menu, font=(config.font, config.font_size),
                              bg=config.colour_button, fg=config.colour_text)
-    back_button3.grid(row=0, column=0, sticky="nsew")
+    back_button3.grid(row=0, column=0)
     label0 = tk.Label(frame5, text="",
                       bg=config.colour_background,
                       fg=config.colour_text)
@@ -254,6 +258,14 @@ def main_game():
                       fg=config.colour_frame3_text,
                       font=(config.font, config.font_size))
     label2.grid(row=1, column=0, sticky="nsew")
+    label_player = tk.Label(frame4, text="",
+                            bg=config.colour_background,
+                            fg=config.colour_text)
+    label_player.grid(row=0, column=1, sticky="nsew")
+    label_player_money = tk.Label(frame4, text="",
+                                  bg=config.colour_background,
+                                  fg=config.colour_text)
+    label_player_money.grid(row=0, column=2, sticky="nsew")
 
     def hide_button_show_buttons():
         button_dice_roll.grid_forget()  # Приховуємо кнопку 1
@@ -268,20 +280,22 @@ def main_game():
         if number == 1:  # рандомне число
             general_map.players[player].set_more_money(summ)
             label1.configure(text="Гравець " + general_map.players[player].get_name() + "\n виграв в казіно")
+            label_player_money.configure(text='Грошей: ' + str(general_map.players[player].get_money()))
             hide_buttons_show_button()
             return "WinCasino"
         else:
             general_map.players[player].set_less_money(summ)
             label1.configure(text="Гравець " + general_map.players[player].get_name() + "\n програв в казіно")
+            label_player_money.configure(text='Грошей: ' + str(general_map.players[player].get_money()))
             hide_buttons_show_button()
             return "LoseCasino"  # гравець програв, завершити програму
 
     def playcasinoaction():
         global current_buttons
-        current_buttons1 = [button_cas_play_act10, button_cas_play_act20, button_cas_play_act50] # вибір з 3х кнопок
+        current_buttons1 = [button_cas_play_act10, button_cas_play_act20, button_cas_play_act50]  # вибір з 3х кнопок
         button_dice_roll.grid_forget()  # Приховуємо кнопку кинути кубик
         for i, button in enumerate(current_buttons):
-            button.grid_forget() # приховуємо кнопки
+            button.grid_forget()  # приховуємо кнопки
         for i, button in enumerate(current_buttons1):
             button.grid(row=i, column=0)  # Відображаємо кнопки
         current_buttons = current_buttons1
@@ -295,6 +309,7 @@ def main_game():
         if number == 1:  # рандомне число
             general_map.players[player].set_more_money(bet * 3)
             label1.configure(text="Гравець " + general_map.players[player].get_name() + "\n виграв в рулетці")
+            label_player_money.configure(text='Грошей: ' + str(general_map.players[player].get_money()))
             hide_buttons_show_button()
             return "WinRoulette"
         else:
@@ -320,6 +335,7 @@ def main_game():
             text="Гравець " + general_map.players[player].get_name() + "\n купив планету")
         general_map.map.array_Fields_in_map[general_map.players_positions[player]].buy(general_map.players[player])
         general_map.own_planet(player)
+        label_player_money.configure(text='Грошей: ' + str(general_map.players[player].get_money()))
         hide_buttons_show_button()
 
     def refuse_to_buy_planet():
@@ -334,6 +350,7 @@ def main_game():
             text="Гравець " + general_map.players[player].get_name() + "\n покращив планету")
         general_map.map.array_Fields_in_map[general_map.players_positions[player]].upgrade()
         general_map.own_planet(player)
+        label_player_money.configure(text='Грошей: ' + str(general_map.players[player].get_money()))
         hide_buttons_show_button()
 
     def refuse_to_upgrade_planet():
@@ -345,6 +362,10 @@ def main_game():
     def handle_button_click():  # при нажатии "бросить кубик"
         global current_buttons
         result = general_map.roll_dice()  # гравця переміщує та повертається на який тип клітини його перемістило
+        label_player.configure(text="Гравець " + general_map.players[
+                    general_map.current_player].get_name())
+        label_player_money.configure(text='Грошей: ' + str(general_map.players[
+                    general_map.current_player].get_money()))
         if result[0] != -1:
             label0.config(text="Випало: " + str(general_map.dice))
         if result[0] == 1:  # телепорт
@@ -382,6 +403,8 @@ def main_game():
                         player].get_name() + " потрапив\n на чужу планету\n і має сплатити\n податок")
                 general_map.map.array_Fields_in_map[general_map.players_positions[player]].pay(
                     general_map.players[player])
+                label_player_money.configure(text='Грошей: ' + str(general_map.players[
+                            general_map.current_player].get_money()))
             elif result[1] == 2:  # своя планета
                 label1.configure(
                     text="Гравець " + general_map.players[
@@ -398,6 +421,11 @@ def main_game():
         # если следующий игрок не может ходить, мы его выпускаем, ход выдаем следующему. он сидеть будет 1 ход
         general_map.current_player += 1
         general_map.current_player %= general_map.players_amount
+        # спосіб не давати робити хід гравцю у тюрмі, але тоді ламається логіка там, де юзається general_map.current_player - 1
+        # while not general_map.players[general_map.current_player].get_enabled():
+        #     general_map.players[general_map.current_player].set_enabled(True)
+        #     general_map.current_player += 1
+        #     general_map.current_player %= general_map.players_amount
 
     button_dice_roll = tk.Button(frame5, text="Кинути кубик", command=handle_button_click,
                                  font=(config.font, config.font_size),

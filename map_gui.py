@@ -125,6 +125,9 @@ class MapGUI:
             if config.array_Fields[i] == "планета":
                 self.canvas.create_text(text_x, text_y, text=self.map.array_Fields_in_map[i].get_name_planet(),
                                         anchor=tk.CENTER, fill="black", font=custom_font)
+                self.canvas.create_text(text_x, text_y + int(self.circle_radius / 5) * 2,
+                                        text=self.map.array_Fields_in_map[i].get_price_planet(),
+                                        anchor=tk.CENTER, fill="black", font=custom_font)
         self.show_players()
 
     def planet_action(self):
